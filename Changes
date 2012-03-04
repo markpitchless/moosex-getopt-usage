@@ -1,5 +1,11 @@
 Revision history for MooseX-Getopt-Usage
 
+0.02    4th March 2012
+
+    * First proper version.
+    * Example.
+    * Bug fixes, docs, dependancy cleanup.
+
 0.01    4th March 2012
 
     * First version, released on an unsuspecting world.
