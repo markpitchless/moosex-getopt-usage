@@ -14,7 +14,7 @@ has greet => ( is => 'ro', isa => 'Str', default => "World",
 sub run {
     my $self = shift;
 
-    $self->getopt_usage if $self->help_flag;
+    $self->getopt_usage( exit => 0 ) if $self->help_flag;
 
     say "Printing message..." if $self->verbose;
     say "Hello " . $self->greet;

@@ -149,6 +149,11 @@ message including meta information.
 
 =head1 ATTRIBUTES
 
+=head2 help_flag
+
+Indicates if any of -?, -h, --help, or --usage where given in the command line
+args.
+
 =head1 METHODS
 
 =head2 getopt_usage( Bool :$no_headings, Int :$exit )
@@ -183,7 +188,7 @@ Put this is a file called hello.pl and make executable.
     sub run {
         my $self = shift;
 
-        $self->getopt_usage if $self->help_flag;
+        $self->getopt_usage( exit => 0 ) if $self->help_flag;
 
         say "Printing message..." if $self->verbose;
         say "Hello " . $self->greet;
