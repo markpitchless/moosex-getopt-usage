@@ -8,7 +8,7 @@ MooseX::Getopt::Usage - Generate usage message from attribute meta.
 =cut
 
 use 5.010;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Moose::Role;
 use Term::ANSIColor;

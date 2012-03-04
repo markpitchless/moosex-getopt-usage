@@ -1,10 +1,18 @@
 Revision history for MooseX-Getopt-Usage
 
+0.03    4th March 2012
+
+    * All methods start getopt_usage or _getopt_usage_ to keep the namespace cleaner.
+    * Use the full label for all column calculations.
+    * Use = instead of : in Default string.
+
+
 0.02    4th March 2012
 
     * First proper version.
     * Example.
     * Bug fixes, docs, dependancy cleanup.
+
 
 0.01    4th March 2012
 
