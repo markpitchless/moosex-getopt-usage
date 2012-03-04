@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
         'Term::ANSIColor' => 0,
         'Term::ReadKey'   => 0,
         'Text::Wrap'      => 0,
+        'File::Basename'  => 0,
     },
     build_requires => {
         'Test::More' => 0,

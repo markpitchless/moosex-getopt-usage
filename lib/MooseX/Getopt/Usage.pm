@@ -15,6 +15,7 @@ use MooseX::Method::Signatures;
 use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
+use File::Basename;
 
 requires qw(_compute_getopt_attrs _get_cmd_flags_for_attr);
 
@@ -125,8 +126,9 @@ __END__
 
 =head1 DESCRIPTION
 
-Role to use along with L<MooseX::Getopt> to provide a usage printing method
-that inspects your classes meta information to build a coloured usage message.
+Perl Moose Role to use along with L<MooseX::Getopt> to provide a usage printing
+method that inspects your classes meta information to build a (coloured) usage
+message including meta information.
 
 =head1 ATTRIBUTES
 
@@ -159,7 +161,7 @@ L<http://github.com/markpitchless/moosex-getopt-usage>
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc NuFoo
+    perldoc MooseX::Getopt::Usage
 
 The source code and other information is hosted on github:
 
