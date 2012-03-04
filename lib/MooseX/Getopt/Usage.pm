@@ -1,9 +1,9 @@
 
-package NuFoo::Role::GetoptUsage;
+package MooseX::Getopt::Usage;
 
 =head1 NAME
 
-NuFoo::Role::GetoptUsage - Generate usage message from attribute meta.
+MooseX::Getopt::Usage - Generate usage message from attribute meta.
 
 =cut
 
@@ -120,7 +120,7 @@ __END__
 
  use Moose;
 
- with 'MooseX::Getopt::Basic', 'NuFoo::Role::GetoptUsage';
+ with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
 
  $self->getopt_usage;
 
