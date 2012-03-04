@@ -11,7 +11,6 @@ use 5.010;
 our $VERSION = '0.01';
 
 use Moose::Role;
-use MooseX::Method::Signatures;
 use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
@@ -49,7 +48,10 @@ has help_flag => (
     documentation => "Display usage message"
 );
 
-method _parse_usage_format ( ClassName|Object $self: Str $fmt ) {
+sub _parse_usage_format {
+    my $self = shift;
+    my $fmt  = shift or confess "No format";
+
     $fmt =~ s/%c/colored $Colours{command}, _prog_name()/ieg;
     $fmt =~ s/%%/%/g;
     # TODO - Be good to have a include that generates a list of the opts
@@ -59,10 +61,15 @@ method _parse_usage_format ( ClassName|Object $self: Str $fmt ) {
     return $fmt;
 }
 
-method _getopt_usage_format (ClassName|Object $self:) { "Usage:\n    %c [OPTIONS]"; }
+sub _getopt_usage_format {
+    "Usage:\n    %c [OPTIONS]";
+}
 
-method getopt_usage( ClassName|Object $self: Bool :$no_headings?, Int :$exit? ) {
-    my $headings = $no_headings ? 0 : 1;
+sub getopt_usage {
+    my $self = shift;
+    my %args = @_;
+    my $exit     = $args{exit};
+    my $headings = $args{no_headings} ? 0 : 1;
 
     say $self->_parse_usage_format($self->_getopt_usage_format) if $headings;
 
@@ -92,7 +99,12 @@ method getopt_usage( ClassName|Object $self: Bool :$no_headings?, Int :$exit? ) 
     return 1;
 }
 
-method _getopt_attr_usage ( ClassName|Object $self: Object $attr, Int :$max_len ) {
+sub _getopt_attr_usage {
+    my $self    = shift;
+    my $attr    = shift or confess "No attr";
+    my %args    = @_;
+    my $max_len = $args{max_len} or confess "No max_len";
+
     my ( $flag, @aliases ) = $self->_get_cmd_flags_for_attr($attr);
     my $label = join " ", map {
         length($_) == 1 ? "-$_" : "--$_"
@@ -115,7 +127,10 @@ method _getopt_attr_usage ( ClassName|Object $self: Object $attr, Int :$max_len 
     say $out;
 }
 
-method _getopt_colourise( ClassName|Object $self: Str|ScalarRef $out ) {
+sub _getopt_colourise {
+    my $self = shift;
+    my $out  = shift || "";
+
     my $str = ref $out ? $out : \$out;
     $$str =~ s/(--?\w+)/colored $Colours{flag}, "$1"/ge;
     return ref $out ? $out : $$str;
