@@ -39,6 +39,16 @@ BEGIN {
         unless (-t STDOUT) && !exists $ENV{ANSI_COLORS_DISABLED};
 }
 
+# As we don't use GLD insert our own help_flag.
+has help_flag => (
+    is            => 'rw',
+    isa           => 'Bool',
+    traits        => ['Getopt'],
+    cmd_flag      => 'help',
+    cmd_aliases   => [qw/? h usage/],
+    documentation => "Display usage message"
+);
+
 method _parse_usage_format ( ClassName|Object $self: Str $fmt ) {
     $fmt =~ s/%c/colored $Colours{command}, _prog_name()/ieg;
     $fmt =~ s/%%/%/g;
@@ -49,12 +59,12 @@ method _parse_usage_format ( ClassName|Object $self: Str $fmt ) {
     return $fmt;
 }
 
-method _usage_format (ClassName|Str $self:) { "Usage:\n    %c [OPTIONS]"; }
+method _getopt_usage_format (ClassName|Object $self:) { "Usage:\n    %c [OPTIONS]"; }
 
 method getopt_usage( ClassName|Object $self: Bool :$no_headings?, Int :$exit? ) {
     my $headings = $no_headings ? 0 : 1;
 
-    say $self->_parse_usage_format($self->_usage_format) if $headings;
+    say $self->_parse_usage_format($self->_getopt_usage_format) if $headings;
 
     my @attrs = sort { $a->name cmp $b->name } $self->_compute_getopt_attrs;
 
