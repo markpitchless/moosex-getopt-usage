@@ -48,7 +48,7 @@ has help_flag => (
     documentation => "Display usage message"
 );
 
-sub _parse_usage_format {
+sub _getopt_usage_parse_format {
     my $self = shift;
     my $fmt  = shift or confess "No format";
 
@@ -57,7 +57,7 @@ sub _parse_usage_format {
     # TODO - Be good to have a include that generates a list of the opts
     #        %r - required  %a - all  %o - options
     $fmt =~ s/^(Usage:)/colored $Colours{heading}, "$1"/e;
-    $self->_getopt_colourise(\$fmt);
+    $self->_getopt_usage_colourise(\$fmt);
     return $fmt;
 }
 
@@ -71,7 +71,7 @@ sub getopt_usage {
     my $exit     = $args{exit};
     my $headings = $args{no_headings} ? 0 : 1;
 
-    say $self->_parse_usage_format($self->_getopt_usage_format) if $headings;
+    say $self->_getopt_usage_parse_format($self->_getopt_usage_format) if $headings;
 
     my @attrs = sort { $a->name cmp $b->name } $self->_compute_getopt_attrs;
 
@@ -91,14 +91,15 @@ sub getopt_usage {
     my ($w) = GetTerminalSize;
     local $Text::Wrap::columns = $w -1 || 72;
     say colored $Colours{heading}, "Required:" if $headings && @req_attrs;
-    $self->_getopt_attr_usage($_, max_len => $max_len ) foreach @req_attrs;
+    $self->_getopt_usage_attr($_, max_len => $max_len ) foreach @req_attrs;
     say colored $Colours{heading}, "Options:" if $headings && @opt_attrs;
-    $self->_getopt_attr_usage($_, max_len => $max_len ) foreach @opt_attrs;
+    $self->_getopt_usage_attr($_, max_len => $max_len ) foreach @opt_attrs;
 
     exit $exit if defined $exit;
     return 1;
 }
 
+# Return the full label, including aliases and dashes, for the passed attribute
 sub _getopt_usage_attr_label {
     my $self = shift;
     my $attr = shift || confess "No attr";
@@ -109,7 +110,8 @@ sub _getopt_usage_attr_label {
     return $label;
 }
 
-sub _getopt_attr_usage {
+# Return the formated and coloured usage string for the passed attribute.
+sub _getopt_usage_attr {
     my $self    = shift;
     my $attr    = shift or confess "No attr";
     my %args    = @_;
@@ -129,11 +131,12 @@ sub _getopt_attr_usage {
     my $col1 = "    $label";
     $col1 .= "".( " " x $pad );
     my $out = wrap($col1, (" " x ($max_len + 9)), " - $docs" );
-    $self->_getopt_colourise(\$out);
+    $self->_getopt_usage_colourise(\$out);
     say $out;
 }
 
-sub _getopt_colourise {
+# Extra colourisation for the attributes usage string. Think syntax highlight.
+sub _getopt_usage_colourise {
     my $self = shift;
     my $out  = shift || "";
 
