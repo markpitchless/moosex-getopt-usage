@@ -132,7 +132,14 @@ __END__
 
  with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
 
- $self->getopt_usage;
+ has verbose => ( is => 'ro', isa => 'Bool', default => 0,
+     documentation => qq{Say lots about what we are doing} );
+
+ sub run {
+     my $self = shift;
+     $self->getopt_usage if $self->help_flag;
+     #...
+ }
 
 =head1 DESCRIPTION
 
@@ -155,6 +162,51 @@ ANSI_COLORS_DISABLED will disable colour even on a tty.
 
 If an exit arg is given and defined then this method will exit the program with
 that exit code.
+
+=head1 EXAMPLE
+
+Put this is a file called hello.pl and make executable.
+
+    #!/usr/bin/env perl
+    package Hello;
+    use Modern::Perl;
+    use Moose;
+
+    with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
+
+    has verbose => ( is => 'ro', isa => 'Bool',
+        documentation => qq{Say lots about what we do} );
+
+    has greet => ( is => 'ro', isa => 'Str', default => "World",
+        documentation => qq{Who to say hello to.} );
+
+    sub run {
+        my $self = shift;
+
+        $self->getopt_usage if $self->help_flag;
+
+        say "Printing message..." if $self->verbose;
+        say "Hello " . $self->greet;
+    }
+
+    package main;
+    Hello->new_with_options->run;
+
+Then call with any of these to get usage output.
+
+ $ ./hello.pl -?
+ $ ./hello.pl -h
+ $ ./hello.pl --help
+ $ ./hello.pl --usage
+
+Which will look a bit like this, only in colour.
+
+ Usage:
+     hello.pl [OPTIONS]
+ Options:
+     --greet	- Str. Default:World. Who to say hello to.
+     --help -? -h --usage - Bool. Display usage message
+     --verbose	- Bool. Say lots about what we do
 
 =head1 SEE ALSO
 
