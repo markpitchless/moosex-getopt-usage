@@ -78,7 +78,7 @@ sub getopt_usage {
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
     foreach (@attrs) {
-        my $len  = length($_->name);
+        my $len  = length($self->_getopt_usage_attr_label($_));
         $max_len = $len if $len > $max_len;
         if ( $_->is_required && !$_->has_default && !$_->has_builder ) {
             push @req_attrs, $_;
@@ -99,26 +99,32 @@ sub getopt_usage {
     return 1;
 }
 
+sub _getopt_usage_attr_label {
+    my $self = shift;
+    my $attr = shift || confess "No attr";
+    my ( $flag, @aliases ) = $self->_get_cmd_flags_for_attr($attr);
+    my $label = join " ", map {
+        length($_) == 1 ? "-$_" : "--$_"
+    } ($flag, @aliases);
+    return $label;
+}
+
 sub _getopt_attr_usage {
     my $self    = shift;
     my $attr    = shift or confess "No attr";
     my %args    = @_;
     my $max_len = $args{max_len} or confess "No max_len";
 
-    my ( $flag, @aliases ) = $self->_get_cmd_flags_for_attr($attr);
-    my $label = join " ", map {
-        length($_) == 1 ? "-$_" : "--$_"
-    } ($flag, @aliases);
+    my $label = $self->_getopt_usage_attr_label($attr);
 
     my $docs  = "";
-    my $pad   = $max_len + 2 - length($label);
+    my $pad   = $max_len - length($label);
     my $def   = $attr->has_default ? $attr->default : "";
     (my $type = $attr->type_constraint) =~ s/(\w+::)*//g;
     $docs .= colored($Colours{type}, "$type. ") if $type;
-    $docs .= colored($Colours{default_value}, "Default:$def").". "
+    $docs .= colored($Colours{default_value}, "Default=$def").". "
         if $def && ! ref $def;
     $docs  .= $attr->documentation || "";
-    #$docs  .= $attr->documentation ? "\t".$attr->documentation : "";
 
     my $col1 = "    $label";
     $col1 .= "".( " " x $pad );
@@ -198,7 +204,7 @@ Put this is a file called hello.pl and make executable.
         documentation => qq{Say lots about what we do} );
 
     has greet => ( is => 'ro', isa => 'Str', default => "World",
-        documentation => qq{Who to say hello to.} );
+        documentation => qq{Who to say hello to} );
 
     sub run {
         my $self = shift;
@@ -224,9 +230,10 @@ Which will look a bit like this, only in colour.
  Usage:
      hello.pl [OPTIONS]
  Options:
-     --greet	- Str. Default:World. Who to say hello to.
+     --greet              - Str. Default=World. Who to say hello to.
      --help -? -h --usage - Bool. Display usage message
-     --verbose	- Bool. Say lots about what we do
+     --verbose            - Bool. Say lots about what we do
+
 
 =head1 SEE ALSO
 
