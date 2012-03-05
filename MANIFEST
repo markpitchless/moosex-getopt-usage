@@ -1,9 +1,12 @@
 Build.PL
 Changes
+examples/hello.pl
 MANIFEST
 README
-lib/MooseX/Getopt/Usage.pm
 t/00-load.t
+t/basic.t
+t/lib/Basic.pm
+t/lib/Basic/Test.pm
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
