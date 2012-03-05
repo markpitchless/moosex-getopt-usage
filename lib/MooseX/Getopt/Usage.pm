@@ -11,12 +11,13 @@ use 5.010;
 our $VERSION = '0.03';
 
 use Moose::Role;
+use Try::Tiny;
 use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
 use File::Basename;
 
-requires qw(_compute_getopt_attrs _get_cmd_flags_for_attr);
+with 'MooseX::Getopt::Basic';
 
 our %Colours = (
     flag          => ['yellow'],
@@ -24,6 +25,7 @@ our %Colours = (
     command       => ['green'],
     type          => ['magenta'],
     default_value => ['cyan'],
+    error         => ['red']
 );
 
 BEGIN {
@@ -48,6 +50,13 @@ has help_flag => (
     documentation => "Display usage message"
 );
 
+# Promote warnings to errors to capture invalid and missing options errors from
+# Getopt::Long::GetOptions.
+around _getopt_spec_warnings => sub {
+    shift; my $class = shift;
+    die @_;
+};
+
 sub _getopt_usage_parse_format {
     my $self = shift;
     my $fmt  = shift or confess "No format";
@@ -70,7 +79,9 @@ sub getopt_usage {
     my %args = @_;
     my $exit     = $args{exit};
     my $headings = $args{no_headings} ? 0 : 1;
+    my $err      = $args{err} || $args{error} || "";
 
+    say colored $Colours{error}, $err if $err;
     say $self->_getopt_usage_parse_format($self->_getopt_usage_format) if $headings;
 
     my @attrs = sort { $a->name cmp $b->name } $self->_compute_getopt_attrs;
@@ -148,6 +159,37 @@ sub _getopt_usage_colourise {
     return ref $out ? $out : $$str;
 }
 
+# The way new_with_options decides if usage is needed does not fit our needs
+# as we don't supply a usage object. So we do it here.
+around new_with_options => sub {
+    my $orig  = shift;
+    my $class = shift;
+    my $self;
+    try {
+        $self = $class->$orig(@_);
+        $self->getopt_usage( exit => 0 ) if $self->help_flag;
+        return $self;
+    }
+    catch {
+        when (
+            /Attribute \((\w+)\) does not pass the type constraint because: (.*?) at/
+        ) {
+            $class->getopt_usage( exit => 1, err => "Invalid '$1' : $2" );
+        }
+        when (/Attribute \((\w+)\) is required /) {
+            $class->getopt_usage( exit => 2, err => "Required option missing: $1" );
+        }
+        when (/^Unknown option:|^Value .*? for option/) {
+            # Getopt::Long warnings we promoted in _getopt_spec_warnings
+            s/\n+$//;
+            $class->getopt_usage( exit => 3, err => $_ );
+        }
+        default {
+            die $_;
+        }
+    };
+};
+
 no Moose::Role;
 
 1;
@@ -157,7 +199,7 @@ __END__
 
  use Moose;
 
- with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
+ with 'MooseX::Getopt::Usage';
 
  has verbose => ( is => 'ro', isa => 'Bool', default => 0,
      documentation => qq{Say lots about what we are doing} );
@@ -170,9 +212,9 @@ __END__
 
 =head1 DESCRIPTION
 
-Perl Moose Role to use along with L<MooseX::Getopt> to provide a usage printing
-method that inspects your classes meta information to build a (coloured) usage
-message including meta information.
+Perl Moose Role that extends L<MooseX::Getopt> to provide a usage printing
+that inspects your classes meta information to build a (coloured) usage
+message including that meta information.
 
 =head1 ATTRIBUTES
 
@@ -183,7 +225,7 @@ args.
 
 =head1 METHODS
 
-=head2 getopt_usage( Bool :$no_headings, Int :$exit )
+=head2 getopt_usage( %args )
 
 Prints the usage message to stdout followed by a table of the options. Options
 are printed required first, then optional.  These two sections get a heading
@@ -197,7 +239,7 @@ that exit code.
 
 =head1 EXAMPLE
 
-Put this is a file called hello.pl and make executable.
+Put this is a file called hello.pl and make it executable.
 
     #!/usr/bin/env perl
     package Hello;
@@ -214,9 +256,6 @@ Put this is a file called hello.pl and make executable.
 
     sub run {
         my $self = shift;
-
-        $self->getopt_usage( exit => 0 ) if $self->help_flag;
-
         say "Printing message..." if $self->verbose;
         say "Hello " . $self->greet;
     }

@@ -9,6 +9,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/MooseX/Getopt/Usage.pm',
     requires => {
         'Moose'           => 1.23,
+        'Try::Tiny'       => 0.09,
         'Term::ANSIColor' => 0,
         'Term::ReadKey'   => 0,
         'Text::Wrap'      => 0,

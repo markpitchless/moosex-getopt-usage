@@ -3,7 +3,7 @@ package Hello;
 use Modern::Perl;
 use Moose;
 
-with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
+with 'MooseX::Getopt::Usage';
 
 has verbose => ( is => 'ro', isa => 'Bool',
     documentation => qq{Say lots about what we do} );
@@ -11,13 +11,13 @@ has verbose => ( is => 'ro', isa => 'Bool',
 has greet => ( is => 'ro', isa => 'Str', default => "World",
     documentation => qq{Who to say hello to.} );
 
+has times => ( is => 'rw', isa => 'Int', required => 1,
+    documentation => qq{How many times to say hello} );
+
 sub run {
     my $self = shift;
-
-    $self->getopt_usage( exit => 0 ) if $self->help_flag;
-
     say "Printing message..." if $self->verbose;
-    say "Hello " . $self->greet;
+    say "Hello " . $self->greet for (1..$self->times);
 }
 
 package main;

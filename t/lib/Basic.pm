@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Moose;
-with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
+with 'MooseX::Getopt::Usage';
 
 has verbose => ( is => 'ro', isa => 'Bool',
     documentation => qq{Say lots about what we do} );
