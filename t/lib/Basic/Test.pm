@@ -8,9 +8,12 @@ use base qw(Test::Class);
 use Test::More;
 use Capture::Tiny qw(:all);
 use Test::Differences;
-use Basic;
 
-sub basic : Test(3) {
+sub startup : Test(startup => 1) {
+    use_ok('Basic');
+}
+
+sub defaults : Test(3) {
     my $self = shift;
 
     my $testme = Basic->new();
@@ -22,6 +25,7 @@ Usage:
 Options:
     --greet              - Str. Default=World. Who to say hello to.
     --help -? -h --usage - Bool. Display usage message
+    --language           - Str. Default=en. Language to greet in.
     --verbose            - Bool. Say lots about what we do
 EOSTDOUT
     my $stderr_ok = "";

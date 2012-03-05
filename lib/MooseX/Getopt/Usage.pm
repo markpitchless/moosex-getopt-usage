@@ -164,7 +164,7 @@ __END__
 
  sub run {
      my $self = shift;
-     $self->getopt_usage if $self->help_flag;
+     $self->getopt_usage( exit => 0 ) if $self->help_flag;
      #...
  }
 
