@@ -117,6 +117,9 @@ sub _getopt_usage_attr {
     my %args    = @_;
     my $max_len = $args{max_len} or confess "No max_len";
 
+    local $Text::Wrap::unexpand = 0;
+    local $Text::Wrap::tabstop  = 4;
+
     my $label = $self->_getopt_usage_attr_label($attr);
 
     my $docs  = "";
