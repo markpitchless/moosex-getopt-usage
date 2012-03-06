@@ -246,7 +246,7 @@ Can now get help,
      --verbose         - Bool. Say lots about what we are doing
      --gumption        - Int. Default=23. How much gumption to apply
 
-and trap errors.
+and trap errors with usage.
 
  $ synopsis.pl --elbowgrease --gumption=Lots
  Unknown option: elbowgrease
@@ -260,9 +260,16 @@ and trap errors.
 
 =head1 DESCRIPTION
 
-Perl Moose Role that extends L<MooseX::Getopt> to provide a usage printing
+Perl Moose Role that extends L<MooseX::Getopt> to provide usage printing
 that inspects your classes meta information to build a (coloured) usage
 message including that meta information.
+
+If stdout is a tty usage message is colourised. Setting the env var
+ANSI_COLORS_DISABLED will disable colour even on a tty.
+
+Errors in command line option parsing will be displayed along with the usage,
+causing the program to exit with a non-zero status code when new_with_options
+is used.
 
 =head1 ATTRIBUTES
 
@@ -279,16 +286,25 @@ Prints the usage message to stdout followed by a table of the options. Options
 are printed required first, then optional.  These two sections get a heading
 unless C<no_headings> arg is true.
 
-If stdout is a tty usage message is colourised. Setting the env var
-ANSI_COLORS_DISABLED will disable colour even on a tty.
+%args can have any of the options from L</CONFIGURATION>, plus the following.
+
+=over 4
+
+=item exit
 
 If an exit arg is given and defined then this method will exit the program with
-that exit code.
+that exit code after displaying usage to STDOUT.
+
+=item err | error
+
+Error message string to display before the usage. Will get the error highlight.
+
+=back
 
 =head2 getopt_usage_config
 
 Return a hash (ie a list) of config to override the defaults. Default returns
-empty hash so you get the defaults. See L</CONFIGURATION> for details.
+empty list. See L</CONFIGURATION> for details.
 
 =head1 CONFIGURATION
 
@@ -301,7 +317,7 @@ L</getopt_usage_config> in your class. e.g.
  with 'MooseX::Getopt::Usage';
 
  sub getopt_usage_config {
-    return ( attr_sort => sub { $_[0]->name cmp $_[1]->name } );
+    return ( format => "Usage %c [OPTIONS]\nAn example command." );
  }
 
 Availiable config is:
@@ -316,16 +332,15 @@ command name. Use %% for a literal %. Default:
 =head2 attr_sort
 
 Sub ref used to sort the attributes and hence the order they appear in the
-usage message. Default is the order the are defined.
+usage message. Default is the order the attributes are defined.
 
-B<NB:> the sort terms ($a and $b) are passed as the first two arguments, do not
-use $a and $b (you will get warnings).
+B<NB:> the sort terms ($a and $b) are passed as the first two arguments, do
+B<not> use $a and $b (you will get warnings). The arguments will be
+L<Moose::Meta::Attribute>s. e.g. to sort by name alphabetically:
 
-=head2 exit
+    attr_sort => sub { $_[0]->name cmp $_[1]->name }
 
 =head2 no_headings
-
-=head2 err | error
 
 =head2 colours | colors
 
