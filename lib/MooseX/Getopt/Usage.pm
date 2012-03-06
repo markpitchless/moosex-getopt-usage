@@ -81,8 +81,9 @@ sub getopt_usage_config { () }
 sub getopt_usage {
     my $self = shift;
     my $conf = { %$DefaultConfig, $self->getopt_usage_config, @_ };
-    $conf->{colours} = delete $conf->{colors}
-        if not exists $conf->{colours} && exists $conf->{colors};
+    if ( ! exists $conf->{colours} && exists $conf->{colors} ) {
+        $conf->{colours} = delete $conf->{colors}
+    }
     #use Data::Dumper; say .Dumper($conf);
 
     my $colours   = $conf->{colours};
