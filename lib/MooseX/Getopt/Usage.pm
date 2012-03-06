@@ -19,14 +19,18 @@ use File::Basename;
 
 with 'MooseX::Getopt::Basic';
 
-our %Colours = (
-    flag          => ['yellow'],
-    heading       => ['bold'],
-    command       => ['green'],
-    type          => ['magenta'],
-    default_value => ['cyan'],
-    error         => ['red']
-);
+our $DefaultConfig = {
+    format    => "Usage:\n    %c [OPTIONS]",
+    attr_sort => sub { 0 },
+    colours   => {
+        flag          => ['yellow'],
+        heading       => ['bold'],
+        command       => ['green'],
+        type          => ['magenta'],
+        default_value => ['cyan'],
+        error         => ['red']
+    }
+};
 
 BEGIN {
     # Thanks to Hans Dieter Pearcey for this. See Getopt::Long::Descriptive.
@@ -58,47 +62,38 @@ around _getopt_spec_warnings => sub {
 };
 
 sub _getopt_usage_parse_format {
-    my $self = shift;
-    my $fmt  = shift or confess "No format";
+    my $self    = shift;
+    my $conf    = shift or confess "No config";
+    my $fmt     = shift or confess "No format";
+    my $colours = $conf->{colours};
 
-    $fmt =~ s/%c/colored $Colours{command}, _prog_name()/ieg;
+    $fmt =~ s/%c/colored $colours->{command}, _prog_name()/ieg;
     $fmt =~ s/%%/%/g;
     # TODO - Be good to have a include that generates a list of the opts
     #        %r - required  %a - all  %o - options
-    $fmt =~ s/^(Usage:)/colored $Colours{heading}, "$1"/e;
-    $self->_getopt_usage_colourise(\$fmt);
+    $fmt =~ s/^(Usage:)/colored $colours->{heading}, "$1"/e;
+    $self->_getopt_usage_colourise($conf, \$fmt);
     return $fmt;
 }
 
 sub getopt_usage_config { () }
 
-sub _getopt_usage_process_config {
-    my $class = shift;
-    my $conf  = shift or confess "No config to process";
-
-    # Set the defaults
-    my %defaults = (
-        format    => "Usage:\n    %c [OPTIONS]",
-        attr_sort => sub { 0 },
-    );
-    %$conf = ( %defaults, %$conf );
-
-    return $conf;
-}
-
 sub getopt_usage {
     my $self = shift;
-    my %args = ($self->getopt_usage_config, @_);
-    $self->_getopt_usage_process_config(\%args);
-    my $exit      = $args{exit};
-    my $headings  = $args{no_headings} ? 0 : 1;
-    my $err       = $args{err} || $args{error} || "";
-    my $format    = $args{format};
-    my $attr_sort = $args{attr_sort};
-    #use Data::Dumper; say Dumper(\%args);
+    my $conf = { %$DefaultConfig, $self->getopt_usage_config, @_ };
+    $conf->{colours} = delete $conf->{colors}
+        if not exists $conf->{colours} && exists $conf->{colors};
+    #use Data::Dumper; say .Dumper($conf);
 
-    say colored $Colours{error}, $err if $err;
-    say $self->_getopt_usage_parse_format($format) if $headings;
+    my $colours   = $conf->{colours};
+    my $exit      = $conf->{exit};
+    my $headings  = $conf->{no_headings} ? 0 : 1;
+    my $err       = $conf->{err} || $conf->{error} || "";
+    my $format    = $conf->{format};
+    my $attr_sort = $conf->{attr_sort};
+
+    say colored $colours->{error}, $err if $err;
+    say $self->_getopt_usage_parse_format($conf, $format) if $headings;
 
     my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
 
@@ -117,10 +112,10 @@ sub getopt_usage {
 
     my ($w) = GetTerminalSize;
     local $Text::Wrap::columns = $w -1 || 72;
-    say colored $Colours{heading}, "Required:" if $headings && @req_attrs;
-    $self->_getopt_usage_attr($_, max_len => $max_len ) foreach @req_attrs;
-    say colored $Colours{heading}, "Options:" if $headings && @opt_attrs;
-    $self->_getopt_usage_attr($_, max_len => $max_len ) foreach @opt_attrs;
+    say colored $colours->{heading}, "Required:" if $headings && @req_attrs;
+    $self->_getopt_usage_attr($conf, $_, max_len => $max_len ) foreach @req_attrs;
+    say colored $colours->{heading}, "Options:" if $headings && @opt_attrs;
+    $self->_getopt_usage_attr($conf, $_, max_len => $max_len ) foreach @opt_attrs;
 
     exit $exit if defined $exit;
     return 1;
@@ -140,8 +135,10 @@ sub _getopt_usage_attr_label {
 # Return the formated and coloured usage string for the passed attribute.
 sub _getopt_usage_attr {
     my $self    = shift;
+    my $conf    = shift or confess "No config";
     my $attr    = shift or confess "No attr";
     my %args    = @_;
+    my $colours = $conf->{colours};
     my $max_len = $args{max_len} or confess "No max_len";
 
     local $Text::Wrap::unexpand = 0;
@@ -153,25 +150,27 @@ sub _getopt_usage_attr {
     my $pad   = $max_len - length($label);
     my $def   = $attr->has_default ? $attr->default : "";
     (my $type = $attr->type_constraint) =~ s/(\w+::)*//g;
-    $docs .= colored($Colours{type}, "$type. ") if $type;
-    $docs .= colored($Colours{default_value}, "Default=$def").". "
+    $docs .= colored($colours->{type}, "$type. ") if $type;
+    $docs .= colored($colours->{default_value}, "Default=$def").". "
         if $def && ! ref $def;
     $docs  .= $attr->documentation || "";
 
     my $col1 = "    $label";
     $col1 .= "".( " " x $pad );
     my $out = wrap($col1, (" " x ($max_len + 9)), " - $docs" );
-    $self->_getopt_usage_colourise(\$out);
+    $self->_getopt_usage_colourise($conf, \$out);
     say $out;
 }
 
 # Extra colourisation for the attributes usage string. Think syntax highlight.
 sub _getopt_usage_colourise {
-    my $self = shift;
-    my $out  = shift || "";
+    my $self    = shift;
+    my $conf    = shift or confess "No config";
+    my $out     = shift || "";
+    my $colours = $conf->{colours};
 
     my $str = ref $out ? $out : \$out;
-    $$str =~ s/(--?\w+)/colored $Colours{flag}, "$1"/ge;
+    $$str =~ s/(--?\w+)/colored $colours->{flag}, "$1"/ge;
     return ref $out ? $out : $$str;
 }
 
