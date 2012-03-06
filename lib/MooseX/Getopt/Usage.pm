@@ -23,7 +23,9 @@ our $DefaultConfig = {
         type          => ['magenta'],
         default_value => ['cyan'],
         error         => ['red']
-    }
+    },
+    unexpand => 0,
+    tabstop  => 4,
 };
 
 BEGIN {
@@ -136,8 +138,8 @@ sub _getopt_usage_attr {
     my $colours = $conf->{colours};
     my $max_len = $args{max_len} or confess "No max_len";
 
-    local $Text::Wrap::unexpand = 0;
-    local $Text::Wrap::tabstop  = 4;
+    local $Text::Wrap::unexpand = $conf->{unexpand};
+    local $Text::Wrap::tabstop  = $conf->{tabstop};
 
     my $label = $self->_getopt_usage_attr_label($attr);
 
@@ -303,6 +305,15 @@ L<Term::ANSIColor>. Default looks like this:
         default_value => ['cyan'],
         error         => ['red']
     }
+
+=head2 unexpand
+
+Set C<$Text::Wrap::unexpand>, see L<Text::Wrap/OVERRIDES>.
+
+=head2 tabstop
+
+Set C<$Text::Wrap::tabstop>, see L<Text::Wrap/OVERRIDES>.
+
 
 =head1 EXAMPLE
 
