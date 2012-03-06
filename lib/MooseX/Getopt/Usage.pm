@@ -168,7 +168,7 @@ sub _getopt_usage_colourise {
     my $colours = $conf->{colours};
 
     my $str = ref $out ? $out : \$out;
-    $$str =~ s/(--?[\w?]+)/colored $colours->{flag}, "$1"/ge;
+    $$str =~ s/(\s--?[\w?]+)/colored $colours->{flag}, "$1"/ge;
     return ref $out ? $out : $$str;
 }
 
