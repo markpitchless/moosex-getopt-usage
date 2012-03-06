@@ -257,7 +257,6 @@ that exit code.
 Return a hash (ie a list) of config to override the defaults. Default returns
 empty hash so you get the defaults. See L</CONFIGURATION> for details.
 
-
 =head1 CONFIGURATION
 
 The configuration used is the defaults, followed by the return from
@@ -276,6 +275,11 @@ Availiable config is:
 
 =head2 format
 
+String to format the top of the usage message. %c is substituted for the
+command name. Use %% for a literal %. Default:
+
+    format => "Usage:\n    %c [OPTIONS]",
+
 =head2 attr_sort
 
 Sub ref used to sort the attributes and hence the order they appear in the
@@ -289,6 +293,20 @@ use $a and $b (you will get warnings).
 =head2 no_headings
 
 =head2 err | error
+
+=head2 colours | colors
+
+Hash ref mapping highlight names to colours, given as strings to pass to
+L<Term::ANSIColor>. Default looks like this:
+
+    colours   => {
+        flag          => ['yellow'],
+        heading       => ['bold'],
+        command       => ['green'],
+        type          => ['magenta'],
+        default_value => ['cyan'],
+        error         => ['red']
+    }
 
 =head1 EXAMPLE
 
