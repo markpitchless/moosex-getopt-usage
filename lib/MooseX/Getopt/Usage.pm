@@ -15,6 +15,7 @@ with 'MooseX::Getopt::Basic';
 
 our $DefaultConfig = {
     format    => "Usage:\n    %c [OPTIONS]",
+    headings  => 1,
     attr_sort => sub { 0 },
     colours   => {
         flag          => ['yellow'],
@@ -84,13 +85,13 @@ sub getopt_usage {
 
     my $colours   = $conf->{colours};
     my $exit      = $conf->{exit};
-    my $headings  = $conf->{no_headings} ? 0 : 1;
+    my $headings  = $conf->{headings};
     my $err       = $conf->{err} || $conf->{error} || "";
     my $format    = $conf->{format};
     my $attr_sort = $conf->{attr_sort};
 
     say colored $colours->{error}, $err if $err;
-    say $self->_getopt_usage_parse_format($conf, $format) if $headings;
+    say $self->_getopt_usage_parse_format($conf, $format);
 
     my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
 
@@ -284,7 +285,7 @@ args.
 
 Prints the usage message to stdout followed by a table of the options. Options
 are printed required first, then optional.  These two sections get a heading
-unless C<no_headings> arg is true.
+unless C<headings> arg or config is false.
 
 %args can have any of the options from L</CONFIGURATION>, plus the following.
 
@@ -311,13 +312,16 @@ empty list. See L</CONFIGURATION> for details.
 The configuration used is the defaults, followed by the return from
 L</getopt_usage_config>, followed by any args passed direct to L</getopt_usage>.
 The easiest way to configure the usage message is to override
-L</getopt_usage_config> in your class. e.g.
+L</getopt_usage_config> in your class. e.g. to use a more compact layout.
 
  use Moose;
  with 'MooseX::Getopt::Usage';
 
  sub getopt_usage_config {
-    return ( format => "Usage %c [OPTIONS]\nAn example command." );
+    return (
+        format   => "Usage: %c [OPTIONS]",
+        headings => 0,
+    );
  }
 
 Availiable config is:
@@ -340,7 +344,10 @@ L<Moose::Meta::Attribute>s. e.g. to sort by name alphabetically:
 
     attr_sort => sub { $_[0]->name cmp $_[1]->name }
 
-=head2 no_headings
+=head2 headings
+
+Whether to add headings of 'Options:' and 'Required:' to the list of options.
+Default is true.
 
 =head2 colours | colors
 
