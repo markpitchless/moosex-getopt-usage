@@ -217,11 +217,46 @@ MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message generated from 
 
 =head1 SYNOPSIS
 
- use Moose;
+    ## In your class
+    package My::App;
+    use Moose;
 
- with 'MooseX::Getopt::Usage';
+    with 'MooseX::Getopt::Usage';
 
- has verbose => ( is => 'ro', isa => 'Bool', default => 0,
+    has verbose => ( is => 'ro', isa => 'Bool', default => 0,
+        documentation => qq{Say lots about what we are doing} );
+
+    has gumption => ( is => 'rw', isa => 'Int', default => 23,
+        documentation => qq{How much gumption to apply} );
+
+    # ... rest of class
+
+    ## In your script
+    #!/usr/bin/perl
+    use My::App;
+    my $app = My::App->new_with_options;
+
+Can now get help,
+
+ $ synopsis.pl -h
+ Usage:
+     synopsis.pl [OPTIONS]
+ Options:
+     --help -? --usage - Bool. Display the usage message and exit
+     --verbose         - Bool. Say lots about what we are doing
+     --gumption        - Int. Default=23. How much gumption to apply
+
+and trap errors.
+
+ $ synopsis.pl --elbowgrease --gumption=Lots
+ Unknown option: elbowgrease
+ Value "Lots" invalid for option gumption (number expected)
+ Usage:
+     synopsis.pl [OPTIONS]
+ Options:
+     --help -? --usage - Bool. Display the usage message and exit
+     --verbose         - Bool. Say lots about what we are doing
+     --gumption        - Int. Default=23. How much gumption to apply
 
 =head1 DESCRIPTION
 
