@@ -70,21 +70,37 @@ sub _getopt_usage_parse_format {
     return $fmt;
 }
 
-sub _getopt_usage_format {
-    "Usage:\n    %c [OPTIONS]";
+sub getopt_usage_config { () }
+
+sub _getopt_usage_process_config {
+    my $class = shift;
+    my $conf  = shift or confess "No config to process";
+
+    # Set the defaults
+    my %defaults = (
+        format    => "Usage:\n    %c [OPTIONS]",
+        attr_sort => sub { 0 },
+    );
+    %$conf = ( %defaults, %$conf );
+
+    return $conf;
 }
 
 sub getopt_usage {
     my $self = shift;
-    my %args = @_;
-    my $exit     = $args{exit};
-    my $headings = $args{no_headings} ? 0 : 1;
-    my $err      = $args{err} || $args{error} || "";
+    my %args = ($self->getopt_usage_config, @_);
+    $self->_getopt_usage_process_config(\%args);
+    my $exit      = $args{exit};
+    my $headings  = $args{no_headings} ? 0 : 1;
+    my $err       = $args{err} || $args{error} || "";
+    my $format    = $args{format};
+    my $attr_sort = $args{attr_sort};
+    #use Data::Dumper; say Dumper(\%args);
 
     say colored $Colours{error}, $err if $err;
-    say $self->_getopt_usage_parse_format($self->_getopt_usage_format) if $headings;
+    say $self->_getopt_usage_parse_format($format) if $headings;
 
-    my @attrs = sort { $a->name cmp $b->name } $self->_compute_getopt_attrs;
+    my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
 
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
@@ -236,6 +252,44 @@ ANSI_COLORS_DISABLED will disable colour even on a tty.
 
 If an exit arg is given and defined then this method will exit the program with
 that exit code.
+
+=head2 getopt_usage_config
+
+Return a hash (ie a list) of config to override the defaults. Default returns
+empty hash so you get the defaults. See L</CONFIGURATION> for details.
+
+
+=head1 CONFIGURATION
+
+The configuration used is the defaults, followed by the return from
+L</getopt_usage_config>, followed by any args passed direct to L</getopt_usage>.
+The easiest way to configure the usage message is to override
+L</getopt_usage_config> in your class. e.g.
+
+ use Moose;
+ with 'MooseX::Getopt::Usage';
+
+ sub getopt_usage_config {
+    return ( attr_sort => sub { $_[0]->name cmp $_[1]->name } );
+ }
+
+Availiable config is:
+
+=head2 format
+
+=head2 attr_sort
+
+Sub ref used to sort the attributes and hence the order they appear in the
+usage message. Default is the order the are defined.
+
+B<NB:> the sort terms ($a and $b) are passed as the first two arguments, do not
+use $a and $b (you will get warnings).
+
+=head2 exit
+
+=head2 no_headings
+
+=head2 err | error
 
 =head1 EXAMPLE
 
