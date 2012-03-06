@@ -1,12 +1,6 @@
 
 package MooseX::Getopt::Usage;
 
-=head1 NAME
-
-MooseX::Getopt::Usage - Generate usage message from attribute meta.
-
-=cut
-
 use 5.010;
 our $VERSION = '0.03';
 
@@ -50,8 +44,8 @@ has help_flag => (
     isa           => 'Bool',
     traits        => ['Getopt'],
     cmd_flag      => 'help',
-    cmd_aliases   => [qw/? h usage/],
-    documentation => "Display usage message"
+    cmd_aliases   => [qw/? usage/],
+    documentation => "Display the usage message and exit"
 );
 
 # Promote warnings to errors to capture invalid and missing options errors from
@@ -211,6 +205,14 @@ no Moose::Role;
 1;
 __END__
 
+=pod
+
+=head1 NAME
+
+MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message generated from attribute meta.
+
+=cut
+
 =head1 SYNOPSIS
 
  use Moose;
@@ -218,13 +220,6 @@ __END__
  with 'MooseX::Getopt::Usage';
 
  has verbose => ( is => 'ro', isa => 'Bool', default => 0,
-     documentation => qq{Say lots about what we are doing} );
-
- sub run {
-     my $self = shift;
-     $self->getopt_usage( exit => 0 ) if $self->help_flag;
-     #...
- }
 
 =head1 DESCRIPTION
 
@@ -236,7 +231,7 @@ message including that meta information.
 
 =head2 help_flag
 
-Indicates if any of -?, -h, --help, or --usage where given in the command line
+Indicates if any of -?, --help, or --usage where given in the command line
 args.
 
 =head1 METHODS
@@ -338,7 +333,6 @@ Put this is a file called hello.pl and make it executable.
 Then call with any of these to get usage output.
 
  $ ./hello.pl -?
- $ ./hello.pl -h
  $ ./hello.pl --help
  $ ./hello.pl --usage
 
@@ -347,9 +341,9 @@ Which will look a bit like this, only in colour.
  Usage:
      hello.pl [OPTIONS]
  Options:
-     --greet              - Str. Default=World. Who to say hello to.
-     --help -? -h --usage - Bool. Display usage message
-     --verbose            - Bool. Say lots about what we do
+     --help -? --usage - Bool. Display usage message
+     --verbose         - Bool. Say lots about what we do
+     --greet           - Str. Default=World. Who to say hello to.
 
 
 =head1 SEE ALSO

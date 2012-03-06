@@ -23,10 +23,10 @@ sub defaults : Test(3) {
 Usage:
     basic.t [OPTIONS]
 Options:
-    --greet              - Str. Default=World. Who to say hello to.
-    --help -? -h --usage - Bool. Display usage message
-    --language           - Str. Default=en. Language to greet in.
-    --verbose            - Bool. Say lots about what we do
+    --help -? --usage - Bool. Display the usage message and exit
+    --verbose         - Bool. Say lots about what we do
+    --greet           - Str. Default=World. Who to say hello to.
+    --language        - Str. Default=en. Language to greet in.
 EOSTDOUT
     my $stderr_ok = "";
     my ($stdout, $stderr) = capture { $testme->getopt_usage };
