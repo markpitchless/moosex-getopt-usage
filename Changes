@@ -1,5 +1,25 @@
 Revision history for MooseX-Getopt-Usage
 
+
+0.04    6th March 2012
+
+    * Fix bugs in option hi lighting.
+    * Add example of compact layout.
+    * Change silly no_headings options to headings.
+    * Docs cleanup.
+    * New synopsis.
+    * Changed default sort order.
+    * New config system, getopt_config method.
+    * Fix error handling and change class usage.
+      You now just say
+        use Moose;
+        with 'MooseX::Getopt::Usage';
+    * Traps missing and invalid option errors properly and displays the error
+      along with usage text.
+    * Fix the layout to not use tabs.
+    * Add a basic test.
+
+
 0.03    4th March 2012
 
     * All methods start getopt_usage or _getopt_usage_ to keep the namespace cleaner.
@@ -17,4 +37,5 @@ Revision history for MooseX-Getopt-Usage
 0.01    4th March 2012
 
     * First version, released on an unsuspecting world.
+
 

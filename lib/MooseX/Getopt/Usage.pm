@@ -2,7 +2,7 @@
 package MooseX::Getopt::Usage;
 
 use 5.010;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Moose::Role;
 use Try::Tiny;
@@ -77,6 +77,9 @@ sub getopt_usage_config { () }
 
 sub getopt_usage {
     my $self = shift;
+    #  Use a global DefaultConfig, merging everything down into $conf in the
+    #  with our args, and pass that into all calls. We can't stash on object as
+    #  this all happens pre construction, or post construction fail.
     my $conf = { %$DefaultConfig, $self->getopt_usage_config, @_ };
     if ( ! exists $conf->{colours} && exists $conf->{colors} ) {
         $conf->{colours} = delete $conf->{colors}
@@ -376,27 +379,30 @@ Set C<$Text::Wrap::tabstop>, see L<Text::Wrap/OVERRIDES>.
 
 Put this is a file called hello.pl and make it executable.
 
-    #!/usr/bin/env perl
-    package Hello;
-    use Modern::Perl;
-    use Moose;
+ #!/usr/bin/env perl
+ package Hello;
+ use Modern::Perl;
+ use Moose;
 
-    with 'MooseX::Getopt::Basic', 'MooseX::Getopt::Usage';
+ with 'MooseX::Getopt::Usage';
 
-    has verbose => ( is => 'ro', isa => 'Bool',
-        documentation => qq{Say lots about what we do} );
+ has verbose => ( is => 'ro', isa => 'Bool',
+     documentation => qq{Say lots about what we do} );
 
-    has greet => ( is => 'ro', isa => 'Str', default => "World",
-        documentation => qq{Who to say hello to} );
+ has greet => ( is => 'ro', isa => 'Str', default => "World",
+     documentation => qq{Who to say hello to.} );
 
-    sub run {
-        my $self = shift;
-        say "Printing message..." if $self->verbose;
-        say "Hello " . $self->greet;
-    }
+ has times => ( is => 'rw', isa => 'Int', required => 1,
+     documentation => qq{How many times to say hello} );
 
-    package main;
-    Hello->new_with_options->run;
+ sub run {
+     my $self = shift;
+     say "Printing message..." if $self->verbose;
+     say "Hello " . $self->greet for (1..$self->times);
+ }
+
+ package main;
+ Hello->new_with_options->run;
 
 Then call with any of these to get usage output.
 
@@ -408,15 +414,16 @@ Which will look a bit like this, only in colour.
 
  Usage:
      hello.pl [OPTIONS]
+ Required:
+     --times           - Int. How many times to say hello
  Options:
-     --help -? --usage - Bool. Display usage message
+     --help -? --usage - Bool. Display the usage message and exit
      --verbose         - Bool. Say lots about what we do
      --greet           - Str. Default=World. Who to say hello to.
 
-
 =head1 SEE ALSO
 
-L<perl>, L<Moose>, L<MooseX::Getopt>.
+L<perl>, L<Moose>, L<MooseX::Getopt>, L<Term::ANSIColor>, L<Text::Wrap>.
 
 =head1 BUGS
 
