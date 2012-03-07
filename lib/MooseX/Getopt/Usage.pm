@@ -249,7 +249,7 @@ MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message generated from 
 
 Can now get help,
 
- $ synopsis.pl -h
+ $ synopsis.pl -?
  Usage:
      synopsis.pl [OPTIONS]
  Options:

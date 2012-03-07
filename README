@@ -2,16 +2,41 @@
 |    MooseX-Getopt-Usage    |
 *===========================*
 
-Perl Moose Role to use along with MooseX::Getopt to provide a usage printing
-method that inspects your classes meta information to build a (coloured) usage
-message including meta information.
+Perl Moose Role that extends L<MooseX::Getopt> to provide usage printing
+that inspects your classes meta information to build a (coloured) usage
+message including that meta information.
 
 
 SYNOPSIS
 
- use Moose;
- with 'MooseX::Getopt::Basic', 'NuFoo::Role::GetoptUsage';
- $self->getopt_usage;
+    ## In your class
+    package My::App;
+    use Moose;
+
+    with 'MooseX::Getopt::Usage';
+
+    has verbose => ( is => 'ro', isa => 'Bool', default => 0,
+        documentation => qq{Say lots about what we are doing} );
+
+    has gumption => ( is => 'rw', isa => 'Int', default => 23,
+        documentation => qq{How much gumption to apply} );
+
+    # ... rest of class
+
+    ## In your script
+    #!/usr/bin/perl
+    use My::App;
+    my $app = My::App->new_with_options;
+
+Can now get help:
+
+    $ synopsis.pl --help
+    Usage:
+        synopsis.pl [OPTIONS]
+    Options:
+        --help -? --usage - Bool. Display the usage message and exit
+        --verbose         - Bool. Say lots about what we are doing
+        --gumption        - Int. Default=23. How much gumption to apply
 
 
 INSTALLATION
