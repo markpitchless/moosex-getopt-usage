@@ -1,5 +1,11 @@
 Revision history for MooseX-Getopt-Usage
 
+0.05    7th March 2012
+
+    * getopt_usage return the string with no exit arg, or outputs and exist with
+      exit arg.
+    * Better test, does method and command line call.
+
 
 0.04    6th March 2012
 
