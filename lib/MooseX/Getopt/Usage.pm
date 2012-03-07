@@ -93,11 +93,11 @@ sub getopt_usage {
     my $format    = $conf->{format};
     my $attr_sort = $conf->{attr_sort};
 
-    say colored $colours->{error}, $err if $err;
-    say $self->_getopt_usage_parse_format($conf, $format);
+    my $out = "";
+    $out .= colored($colours->{error}, $err)."\n" if $err;
+    $out .= $self->_getopt_usage_parse_format($conf, $format)."\n";
 
     my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
-
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
     foreach (@attrs) {
@@ -113,13 +113,20 @@ sub getopt_usage {
 
     my ($w) = GetTerminalSize;
     local $Text::Wrap::columns = $w -1 || 72;
-    say colored $colours->{heading}, "Required:" if $headings && @req_attrs;
-    $self->_getopt_usage_attr($conf, $_, max_len => $max_len ) foreach @req_attrs;
-    say colored $colours->{heading}, "Options:" if $headings && @opt_attrs;
-    $self->_getopt_usage_attr($conf, $_, max_len => $max_len ) foreach @opt_attrs;
+    $out .= colored($colours->{heading}, "Required:")."\n"
+        if $headings && @req_attrs;
+    $out .= $self->_getopt_usage_attr($conf, $_, max_len => $max_len )."\n"
+        foreach @req_attrs;
+    $out .= colored($colours->{heading}, "Options:")."\n"
+        if $headings && @opt_attrs;
+    $out .= $self->_getopt_usage_attr($conf, $_, max_len => $max_len )."\n"
+        foreach @opt_attrs;
 
-    exit $exit if defined $exit;
-    return 1;
+    if ( defined $exit ) {
+        print $out;
+        exit $exit;
+    }
+    return $out;
 }
 
 # Return the full label, including aliases and dashes, for the passed attribute
@@ -160,7 +167,7 @@ sub _getopt_usage_attr {
     $col1 .= "".( " " x $pad );
     my $out = wrap($col1, (" " x ($max_len + 9)), " - $docs" );
     $self->_getopt_usage_colourise($conf, \$out);
-    say $out;
+    return $out;
 }
 
 # Extra colourisation for the attributes usage string. Think syntax highlight.
@@ -286,9 +293,16 @@ args.
 
 =head2 getopt_usage( %args )
 
-Prints the usage message to stdout followed by a table of the options. Options
-are printed required first, then optional.  These two sections get a heading
-unless C<headings> arg or config is false.
+Generate the usage message and return or output to stdout and exit. Without
+exit arg returns the usage string, with an exit arg prints the usage to stdout
+and exits with the given exit code.
+
+ print $self->getopt_usage if $self->help_flag;
+
+ $self->getopt_usage( exit => 10, err => "Their all dead, Dave" );
+
+Options are printed required first, then optional.  These two sections get a
+heading unless C<headings> arg or config is false.
 
 %args can have any of the options from L</CONFIGURATION>, plus the following.
 
