@@ -1,10 +1,14 @@
 Build.PL
 Changes
+examples/hello-compact.pl
 examples/hello.pl
+examples/synopsis.pl
+lib/MooseX/Getopt/Usage.pm
 MANIFEST
 README
 t/00-load.t
 t/basic.t
+t/bin/basic
 t/lib/Basic.pm
 t/lib/Basic/Test.pm
 t/manifest.t
