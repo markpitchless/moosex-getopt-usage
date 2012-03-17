@@ -1,0 +1,30 @@
+---
+abstract: 'Extend MooseX::Getopt with usage message generated from attribute meta.'
+author:
+  - 'Mark Pitchless <markpitchless@gmail.com>'
+build_requires:
+  Capture::Tiny: 0.08
+  Test::Differences: 0.5
+  Test::More: 0
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3603'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: MooseX-Getopt-Usage
+provides:
+  MooseX::Getopt::Usage:
+    file: lib/MooseX/Getopt/Usage.pm
+    version: 0.05
+requires:
+  File::Basename: 0
+  Moose: 1.23
+  Term::ANSIColor: 0
+  Term::ReadKey: 0
+  Text::Wrap: 0
+  Try::Tiny: 0.09
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.05
