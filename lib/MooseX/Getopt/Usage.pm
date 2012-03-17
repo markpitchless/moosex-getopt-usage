@@ -224,7 +224,9 @@ __END__
 
 MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message generated from attribute meta.
 
-=cut
+=head1 VERSION
+
+Version 0.05
 
 =head1 SYNOPSIS
 
