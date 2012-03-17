@@ -7,3 +7,4 @@
 \.git
 \.swp$
 \.swo$
+^MYMETA.yml$
