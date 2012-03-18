@@ -52,14 +52,6 @@ has help_flag => (
     documentation => "Display the usage message and exit"
 );
 
-has man => (
-    is            => 'rw',
-    isa           => 'Bool',
-    traits        => ['Getopt'],
-    cmd_flag      => 'man',
-    documentation => "Display man page"
-);
-
 # Promote warnings to errors to capture invalid and missing options errors from
 # Getopt::Long::GetOptions.
 around _getopt_spec_warnings => sub {
@@ -199,7 +191,7 @@ around new_with_options => sub {
     my $self;
     try {
         $self = $class->$orig(@_);
-        if ( $self->man ) {
+        if ( $self->can('man') and $self->man ) {
             (my $classfile = "$class.pm") =~ s/::/\//g;
             my $podfile = $INC{$classfile};
             pod2usage( -verbose => 2, -input => $podfile )
@@ -308,7 +300,7 @@ args.
 =head2 man
 
 The --man option on the command line. If true after class construction
-program will exit displaying the man made generated from the POD.
+program will exit displaying the man generated from the POD.
 
 =head1 METHODS
 

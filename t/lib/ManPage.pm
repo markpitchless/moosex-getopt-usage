@@ -4,6 +4,7 @@ use warnings;
 
 use Moose;
 with 'MooseX::Getopt::Usage';
+with 'MooseX::Getopt::Usage::Role::Man';
 
 =pod
 
