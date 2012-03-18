@@ -1,8 +1,9 @@
 package MooseX::Getopt::Usage::Role::Man;
 
-our $VERSION = '0.01';
+our $VERSION = '0.06';
 
 use Moose::Role;
+use Pod::Usage;
 
 has man => (
     is            => 'rw',
@@ -11,6 +12,15 @@ has man => (
     cmd_flag      => 'man',
     documentation => "Display man page"
 );
+
+sub getopt_usage_man {
+    my $self  = shift;
+    my $class = blessed $self || $self;
+
+    (my $classfile = "$class.pm") =~ s/::/\//g;
+    my $podfile = $INC{$classfile};
+    pod2usage( -verbose => 2, -input => $podfile )
+}
 
 no Moose::Role;
 
@@ -39,9 +49,13 @@ program will exit displaying the man generated from the POD.
 
 =head1 METHODS
 
+=head2 getopt_usage_man
+
+Generate the man page and exit, via L<Pod::Usage>.
+
 =head1 SEE ALSO
 
-L<MooseX::Getopt::Usage>, L<Moose>, L<perl>.
+L<MooseX::Getopt::Usage>, L<Pod::Usage>, L<Moose>, L<perl>.
 
 =head1 BUGS
 

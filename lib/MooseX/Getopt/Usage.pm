@@ -10,7 +10,6 @@ use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
 use File::Basename;
-use Pod::Usage;
 
 with 'MooseX::Getopt::Basic';
 
@@ -191,11 +190,7 @@ around new_with_options => sub {
     my $self;
     try {
         $self = $class->$orig(@_);
-        if ( $self->can('man') and $self->man ) {
-            (my $classfile = "$class.pm") =~ s/::/\//g;
-            my $podfile = $INC{$classfile};
-            pod2usage( -verbose => 2, -input => $podfile )
-        }
+        $self->getopt_usage_man          if $self->can('man') and $self->man;
         $self->getopt_usage( exit => 0 ) if $self->help_flag;
         return $self;
     }
