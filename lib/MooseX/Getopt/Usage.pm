@@ -94,10 +94,6 @@ sub getopt_usage {
     my $format    = $conf->{format};
     my $attr_sort = $conf->{attr_sort};
 
-    my $out = "";
-    $out .= colored($colours->{error}, $err)."\n" if $err;
-    $out .= $self->_getopt_usage_parse_format($conf, $format)."\n";
-
     my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
@@ -114,6 +110,10 @@ sub getopt_usage {
 
     my ($w) = GetTerminalSize;
     local $Text::Wrap::columns = $w -1 || 72;
+
+    my $out = "";
+    $out .= colored($colours->{error}, $err)."\n" if $err;
+    $out .= $self->_getopt_usage_parse_format($conf, $format)."\n";
     $out .= colored($colours->{heading}, "Required:")."\n"
         if $headings && @req_attrs;
     $out .= $self->_getopt_usage_attr($conf, $_, max_len => $max_len )."\n"
