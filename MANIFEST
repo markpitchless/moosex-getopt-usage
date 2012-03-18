@@ -11,8 +11,13 @@ README
 t/00-load.t
 t/basic.t
 t/bin/basic
+t/bin/manpage
 t/lib/Basic.pm
 t/lib/Basic/Test.pm
+t/lib/ManPage.pm
+t/lib/ManPage/Test.pm
 t/manifest.t
+t/manpage.ok
+t/manpage.t
 t/pod-coverage.t
 t/pod.t

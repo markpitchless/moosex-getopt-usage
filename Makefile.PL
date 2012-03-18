@@ -7,7 +7,9 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Capture::Tiny' => '0.08',
                            'File::Basename' => 0,
+                           'File::Slurp' => 0,
                            'Moose' => '1.23',
+                           'Pod::Usage' => '1.36',
                            'Term::ANSIColor' => 0,
                            'Term::ReadKey' => 0,
                            'Test::Differences' => '0.5',

@@ -4,6 +4,7 @@ author:
   - 'Mark Pitchless <markpitchless@gmail.com>'
 build_requires:
   Capture::Tiny: 0.08
+  File::Slurp: 0
   Test::Differences: 0.5
   Test::More: 0
 configure_requires:
@@ -21,6 +22,7 @@ provides:
 requires:
   File::Basename: 0
   Moose: 1.23
+  Pod::Usage: 1.36
   Term::ANSIColor: 0
   Term::ReadKey: 0
   Text::Wrap: 0
