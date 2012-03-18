@@ -10,6 +10,7 @@ use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
 use File::Basename;
+use Pod::Usage;
 
 with 'MooseX::Getopt::Basic';
 
@@ -49,6 +50,14 @@ has help_flag => (
     cmd_flag      => 'help',
     cmd_aliases   => [qw/? usage/],
     documentation => "Display the usage message and exit"
+);
+
+has man => (
+    is            => 'rw',
+    isa           => 'Bool',
+    traits        => ['Getopt'],
+    cmd_flag      => 'man',
+    documentation => "Display man page"
 );
 
 # Promote warnings to errors to capture invalid and missing options errors from
@@ -190,6 +199,11 @@ around new_with_options => sub {
     my $self;
     try {
         $self = $class->$orig(@_);
+        if ( $self->man ) {
+            (my $classfile = "$class.pm") =~ s/::/\//g;
+            my $podfile = $INC{$classfile};
+            pod2usage( -verbose => 2, -input => $podfile )
+        }
         $self->getopt_usage( exit => 0 ) if $self->help_flag;
         return $self;
     }
@@ -290,6 +304,11 @@ is used.
 
 Indicates if any of -?, --help, or --usage where given in the command line
 args.
+
+=head2 man
+
+The --man option on the command line. If true after class construction
+program will exit displaying the man made generated from the POD.
 
 =head1 METHODS
 
@@ -439,7 +458,8 @@ Which will look a bit like this, only in colour.
 
 =head1 SEE ALSO
 
-L<perl>, L<Moose>, L<MooseX::Getopt>, L<Term::ANSIColor>, L<Text::Wrap>.
+L<perl>, L<Moose>, L<MooseX::Getopt>, L<Term::ANSIColor>, L<Text::Wrap>,
+L<Pod::Usage>.
 
 =head1 BUGS
 
