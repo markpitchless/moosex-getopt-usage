@@ -1,28 +1,20 @@
-home::mda::Lab:h:ommoeo:s:emxd-Uags:ee:trLoapCbto:-n:utmsroaiogbseue:tx:e-tdg:e:Ptbeoirpnlt:-:Du.os.ca:ug:mele:in:btt:a::t:MibaoinnnP:a:g.e.(:3:)lib::ManPage(3)
+NAME
+    manpage - Using MooseX::Getopt::Usage and Pod::Usage
 
+SYNOPSIS
+        manpage [options]
 
+        --help -? --usage - Bool. Display the usage message and exit
+        --man             - Bool. Display man page
 
-NNAAMMEE
-       manpage - Using MooseX::Getopt::Usage and Pod::Usage
+OPTIONS
+    --help -? --usage
+        Display the usage message and exit
 
-SSYYNNOOPPSSIISS
-       manpage [options] [file ...]
+    --man
+        Display man page
 
-       Options:
-         -help          brief help message
-         -man           full documentation
+DESCRIPTION
+    This program will read the given input file(s) and do something useful
+    with the contents thereof.
 
-OOPPTTIIOONNSS
-       --hheellpp
-           Print a brief help message and exits.
-
-       --mmaann
-           Prints the manual page and exits.
-
-DDEESSCCRRIIPPTTIIOONN
-       TThhiiss pprrooggrraamm will read the given input file(s) and do something useful
-       with the contents thereof.
-
-
-
-perl v5.12.4  home::mda::Lab::moos2e0x1-2g-e0t3o-p1t8-usage::t::bin::..::lib::ManPage(3)

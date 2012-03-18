@@ -93,6 +93,9 @@ sub getopt_usage {
     my $format    = $conf->{format};
     my $attr_sort = $conf->{attr_sort};
 
+    local $ENV{ANSI_COLORS_DISABLED} = 0
+        if defined $conf->{use_color} and not $conf->{use_color};
+
     my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
