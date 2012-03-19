@@ -19,9 +19,11 @@ my $builder = Module::Build->new(
     },
     build_requires => {
         'File::Slurp'       => 0,
+        'Test::Class'       => 0.36,
         'Test::More'        => 0,
         'Test::Differences' => 0.5,
         'Capture::Tiny'     => 0.08,
+        'FindBin'           => 0,
     },
     add_to_cleanup     => [ 'MooseX-Getopt-Usage-*' ],
     create_makefile_pl => 'traditional',

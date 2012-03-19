@@ -1,5 +1,10 @@
 Revision history for MooseX-Getopt-Usage
 
+0.07    19th March 2012
+
+    * Add dep for MooseX::Getopt. Hopefully we want now get a complete fail
+      across cpan testers.
+
 0.06    17th March 2012
 
     * Add VERSION section to POD.

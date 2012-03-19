@@ -5,6 +5,8 @@ author:
 build_requires:
   Capture::Tiny: 0.08
   File::Slurp: 0
+  FindBin: 0
+  Test::Class: 0.36
   Test::Differences: 0.5
   Test::More: 0
 configure_requires:
@@ -18,7 +20,7 @@ name: MooseX-Getopt-Usage
 provides:
   MooseX::Getopt::Usage:
     file: lib/MooseX/Getopt/Usage.pm
-    version: 0.06
+    version: 0.07
 requires:
   File::Basename: 0
   Moose: 1.23
@@ -30,4 +32,4 @@ requires:
   Try::Tiny: 0.09
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.06
+version: 0.07
