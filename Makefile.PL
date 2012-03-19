@@ -8,6 +8,7 @@ WriteMakefile
                            'Capture::Tiny' => '0.08',
                            'File::Basename' => 0,
                            'Moose' => '1.23',
+                           'MooseX::Getopt' => 0,
                            'Term::ANSIColor' => 0,
                            'Term::ReadKey' => 0,
                            'Test::Differences' => '0.5',
