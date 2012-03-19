@@ -2,7 +2,7 @@
 package MooseX::Getopt::Usage;
 
 use 5.010;
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Moose::Role;
 use Try::Tiny;
@@ -226,7 +226,7 @@ MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message generated from 
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =head1 SYNOPSIS
 

@@ -17,7 +17,7 @@ name: MooseX-Getopt-Usage
 provides:
   MooseX::Getopt::Usage:
     file: lib/MooseX/Getopt/Usage.pm
-    version: 0.06
+    version: 0.07
 requires:
   File::Basename: 0
   Moose: 1.23
@@ -28,4 +28,4 @@ requires:
   Try::Tiny: 0.09
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.06
+version: 0.07
