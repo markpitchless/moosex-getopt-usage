@@ -10,6 +10,7 @@ WriteMakefile
                            'File::Slurp' => 0,
                            'Moose' => '1.23',
                            'Pod::Usage' => '1.36',
+                           'MooseX::Getopt' => 0,
                            'Term::ANSIColor' => 0,
                            'Term::ReadKey' => 0,
                            'Test::Differences' => '0.5',
