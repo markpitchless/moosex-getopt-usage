@@ -7,10 +7,12 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Capture::Tiny' => '0.08',
                            'File::Basename' => 0,
+                           'FindBin' => 0,
                            'Moose' => '1.23',
                            'MooseX::Getopt' => 0,
                            'Term::ANSIColor' => 0,
                            'Term::ReadKey' => 0,
+                           'Test::Class' => '0.36',
                            'Test::Differences' => '0.5',
                            'Test::More' => 0,
                            'Text::Wrap' => 0,

@@ -4,6 +4,8 @@ author:
   - 'Mark Pitchless <markpitchless@gmail.com>'
 build_requires:
   Capture::Tiny: 0.08
+  FindBin: 0
+  Test::Class: 0.36
   Test::Differences: 0.5
   Test::More: 0
 configure_requires:
