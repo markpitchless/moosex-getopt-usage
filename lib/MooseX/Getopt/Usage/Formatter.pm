@@ -18,8 +18,8 @@ BEGIN {
     # Thanks to Hans Dieter Pearcey for this. See Getopt::Long::Descriptive.
     # Grab prog name before someone decides to change it.
     my $prog_name;
-    sub _prog_name { @_ ? ($prog_name = shift) : $prog_name }
-    _prog_name(File::Basename::basename($0));
+    sub prog_name { @_ ? ($prog_name = shift) : $prog_name }
+    prog_name(File::Basename::basename($0));
 }
 
 has getopt_class => (
@@ -184,7 +184,7 @@ sub _getopt_usage_parse_format {
     my $fmt     = shift or confess "No format";
     my $colours = $self->colours;
 
-    $fmt =~ s/%c/colored $colours->{command}, _prog_name()/ieg;
+    $fmt =~ s/%c/colored $colours->{command}, prog_name()/ieg;
     $fmt =~ s/%%/%/g;
     # TODO - Be good to have a include that generates a list of the opts
     #        %r - required  %a - all  %o - options
