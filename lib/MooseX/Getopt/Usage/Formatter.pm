@@ -15,7 +15,6 @@ use File::Slurp qw(slurp);
 use File::Basename;
 
 BEGIN {
-    # Thanks to Hans Dieter Pearcey for this. See Getopt::Long::Descriptive.
     # Grab prog name before someone decides to change it.
     my $prog_name;
     sub prog_name { @_ ? ($prog_name = shift) : $prog_name }
@@ -286,6 +285,15 @@ MooseX::Getopt::Usage::Formatter -
 
 =head1 METHODS
 
+=head2 usage
+
+=head2 manpage
+
+=head2 prog_name
+
+The name of the program, grabbed at BEGIN time before someone decides to
+change it.
+
 =head1 SEE ALSO
 
 L<Moose>, L<perl>.
@@ -297,6 +305,7 @@ See L<MooseX::Getopt::Usage/BUGS> for details of how to report bugs.
 
 =head1 ACKNOWLEDGEMENTS
 
+Thanks to Hans Dieter Pearcey for prog name grabbing. See L<Getopt::Long::Descriptive>.
 
 =head1 AUTHOR
 
