@@ -1,6 +1,18 @@
 package MooseX::Getopt::Usage::Formatter;
 
+use 5.010;
 our $VERSION = '0.01';
+
+use Moose;
+#use MooseX::StrictConstructor;
+use Moose::Util::TypeConstraints;
+use Term::ANSIColor;
+use Term::ReadKey;
+use Text::Wrap;
+use Pod::Usage;
+use Pod::Find qw(pod_where);
+use File::Slurp qw(slurp);
+use File::Basename;
 
 BEGIN {
     # Thanks to Hans Dieter Pearcey for this. See Getopt::Long::Descriptive.
@@ -8,20 +20,7 @@ BEGIN {
     my $prog_name;
     sub _prog_name { @_ ? ($prog_name = shift) : $prog_name }
     _prog_name(File::Basename::basename($0));
-
-    # Only use color when we are a terminal
-    $ENV{ANSI_COLORS_DISABLED} = 1
-        unless (-t STDOUT) && !exists $ENV{ANSI_COLORS_DISABLED};
 }
-
-use Moose;
-#use MooseX::StrictConstructor;
-use Term::ANSIColor;
-use Term::ReadKey;
-use Text::Wrap;
-use Pod::Usage;
-use Pod::Find qw(pod_where);
-use File::Slurp qw(slurp);
 
 has getopt_class => (
     is       => "rw",
@@ -60,9 +59,12 @@ has attr_sort => (
     default => sub { sub {0} },
 );
 
+enum 'ColorUsage', [qw(auto never always env)];
+
 has use_color => (
     is      => "rw",
-    isa     => "Bool",
+    isa     => "ColorUsage",
+    default => "auto",
 );
 
 has unexpand => (
@@ -90,8 +92,22 @@ sub usage {
     my $format    = $args->{format}   || $self->format;
     my $attr_sort = $self->attr_sort;
 
-    local $ENV{ANSI_COLORS_DISABLED} = 0
-        if defined $args->{use_color} and not $args->{use_color};
+    # Set the color handling for this call
+    local $ENV{ANSI_COLORS_DISABLED} = defined $ENV{ANSI_COLORS_DISABLED} ? 1 : undef;
+    given ($args->{use_color} || $self->use_color) {
+        when ('auto') {
+            if ( not defined $ENV{ANSI_COLORS_DISABLED} ) {
+                $ENV{ANSI_COLORS_DISABLED} = -t STDOUT ? undef : 1;
+            }
+        }
+        when ('always') {
+            $ENV{ANSI_COLORS_DISABLED} = undef;
+        }
+        when ('never') {
+            $ENV{ANSI_COLORS_DISABLED} = 1;
+        }
+        # 'env' is done in the local line above
+    }
 
     my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
     my $max_len = 0;
@@ -144,7 +160,7 @@ sub manpage {
     my @attrs = $gclass->_compute_getopt_attrs;
     my $usage = $self->usage(
         headings  => 0,
-        use_color => 0,
+        use_color => 'never',
         format    => $USAGE_FORMAT,
     );
     $usage .= "\n=head1 OPTIONS\n\n";

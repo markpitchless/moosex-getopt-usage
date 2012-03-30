@@ -6,7 +6,6 @@ our $VERSION = '0.08';
 
 use Moose::Role;
 use Try::Tiny;
-use File::Basename;
 use MooseX::Getopt::Usage::Formatter;
 
 with 'MooseX::Getopt::Basic';
