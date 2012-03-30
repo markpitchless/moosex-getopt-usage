@@ -4,9 +4,6 @@ use 5.010;
 our $VERSION = '0.06';
 
 use Moose::Role;
-use Pod::Usage;
-use Pod::Find qw(pod_where);
-use File::Slurp qw(slurp);
 
 has man => (
     is            => 'rw',
@@ -15,40 +12,6 @@ has man => (
     cmd_flag      => 'man',
     documentation => "Display man page"
 );
-
-my $USAGE_FORMAT = <<EOFORMAT;
-
-=head1 SYNOPSIS
-
-    %c [options]
-EOFORMAT
-
-sub getopt_usage_man {
-    my $self  = shift;
-    my $class = blessed $self || $self;
-
-    #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
-    my @attrs = $self->_compute_getopt_attrs;
-    my $usage = $self->getopt_usage(
-        headings  => 0,
-        use_color => 0,
-        format    => $USAGE_FORMAT,
-    );
-    $usage .= "\n=head1 OPTIONS\n\n";
-    $usage .= "=over 4\n\n";
-    foreach my $attr (@attrs) {
-        my $label = $self->_getopt_usage_attr_label($attr);
-        $usage .= "=item B<$label>\n\n";
-        $usage .= $attr->documentation."\n\n";
-    }
-    $usage .= "=back\n\n";
-
-    my $podfile = pod_where( {-inc => 1}, $class );
-    my $pod = slurp $podfile;
-    $pod =~ s/(^=head1 DESCRIPTION.*?$)/$usage\n$1\n/ms;
-    open my $fh, "<", \$pod or die;
-    pod2usage( -verbose => 2, -input => $fh );
-}
 
 no Moose::Role;
 
@@ -77,10 +40,6 @@ program will exit displaying the man generated from the POD.
 
 =head1 METHODS
 
-=head2 getopt_usage_man
-
-Generate the man page and exit, via L<Pod::Usage>.
-
 =head1 SEE ALSO
 
 L<MooseX::Getopt::Usage>, L<Pod::Usage>, L<Moose>, L<perl>.
@@ -92,6 +51,7 @@ See L<MooseX::Getopt::Usage/BUGS> for details of how to report bugs.
 
 =head1 AUTHOR
 
+Mark Pitchless, C<< <markpitchless at gmail.com> >>
 
 =head1 COPYRIGHT
 

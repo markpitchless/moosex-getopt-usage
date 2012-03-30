@@ -19,6 +19,9 @@ use Moose;
 use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
+use Pod::Usage;
+use Pod::Find qw(pod_where);
+use File::Slurp qw(slurp);
 
 has getopt_class => (
     is       => "rw",
@@ -83,12 +86,12 @@ sub usage {
 
     my $gclass    = $self->getopt_class;
     my $colours   = $self->colours;
-    my $headings  = $self->headings;
-    my $format    = $self->format;
+    my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
+    my $format    = $args->{format}   || $self->format;
     my $attr_sort = $self->attr_sort;
 
     local $ENV{ANSI_COLORS_DISABLED} = 0
-        if defined $self->use_color and not $self->use_color;
+        if defined $args->{use_color} and not $args->{use_color};
 
     my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
     my $max_len = 0;
@@ -124,6 +127,40 @@ sub usage {
         exit $exit;
     }
     return $out;
+}
+
+my $USAGE_FORMAT = <<EOFORMAT;
+
+=head1 SYNOPSIS
+
+    %c [options]
+EOFORMAT
+
+sub manpage {
+    my $self   = shift;
+    my $gclass = $self->getopt_class;
+
+    #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
+    my @attrs = $gclass->_compute_getopt_attrs;
+    my $usage = $self->usage(
+        headings  => 0,
+        use_color => 0,
+        format    => $USAGE_FORMAT,
+    );
+    $usage .= "\n=head1 OPTIONS\n\n";
+    $usage .= "=over 4\n\n";
+    foreach my $attr (@attrs) {
+        my $label = $self->_getopt_usage_attr_label($attr);
+        $usage .= "=item B<$label>\n\n";
+        $usage .= $attr->documentation."\n\n";
+    }
+    $usage .= "=back\n\n";
+
+    my $podfile = pod_where( {-inc => 1}, $gclass );
+    my $pod = slurp $podfile;
+    $pod =~ s/(^=head1 DESCRIPTION.*?$)/$usage\n$1\n/ms;
+    open my $fh, "<", \$pod or die;
+    pod2usage( -verbose => 2, -input => $fh );
 }
 
 sub _getopt_usage_parse_format {

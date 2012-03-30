@@ -33,13 +33,14 @@ sub getopt_usage_config { () }
 sub getopt_usage {
     my $proto = shift;
     my $class = ref $proto || $proto;
-    my $conf  = { $class->getopt_usage_config, @_ };
+    my %args  = @_;
+    my $conf  = { $class->getopt_usage_config, %args };
     if ( ! exists $conf->{colours} && exists $conf->{colors} ) {
         $conf->{colours} = delete $conf->{colors}
     }
     $conf->{getopt_class} = $class;
     my $fmtr = MooseX::Getopt::Usage::Formatter->new($conf);
-    $fmtr->usage(@_);
+    return $args{man} ? $fmtr->manpage(%args) : $fmtr->usage(%args);
 }
 
 # The way new_with_options decides if usage is needed does not fit our needs
@@ -50,7 +51,7 @@ around new_with_options => sub {
     my $self;
     try {
         $self = $class->$orig(@_);
-        $self->getopt_usage_man          if $self->can('man') and $self->man;
+        $self->getopt_usage( man => 1)   if $self->can('man') and $self->man;
         $self->getopt_usage( exit => 0 ) if $self->help_flag;
         return $self;
     }
