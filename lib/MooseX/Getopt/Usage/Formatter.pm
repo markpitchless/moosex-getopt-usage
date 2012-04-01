@@ -339,9 +339,17 @@ MooseX::Getopt::Usage::Formatter -
 
 =head1 SYNOPSIS
 
- my $obj = MooseX::Getopt::Usage::Formatter->new();
+ my $fmtr = MooseX::Getopt::Usage::Formatter->new(
+    getopt_class => 'Some::Getopt::Class'
+ );
+ $fmtr->usage;
+ $fmtr->man;
 
 =head1 DESCRIPTION
+
+Internal module to do the heavy lifting of usage message and man page
+generation for L<MooseX::Getopt::Usage>. See it's documentation for usage and
+attribute descriptions.
 
 =head1 ATTRIBUTES
 
@@ -378,7 +386,7 @@ change it.
 
 =head1 SEE ALSO
 
-L<Moose>, L<perl>.
+L<MooseX::Getopt::Usage>, L<Moose>, L<perl>.
 
 =head1 BUGS
 
