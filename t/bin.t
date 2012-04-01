@@ -2,5 +2,5 @@
 
 use FindBin qw($Bin);
 use lib ("$Bin/lib");
-use PodUsage::Test;
+use Bin::Test;
 Test::Class->runtests;
