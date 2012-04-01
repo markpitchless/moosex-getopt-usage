@@ -22,6 +22,21 @@ BEGIN {
     prog_name(File::Basename::basename($0));
 }
 
+# Util wrapper for pod select and its file based API
+sub podselect_text {
+    my @args = @_;
+    my $selected = "";
+    open my $fh, ">", \$selected or die;
+    if ( exists $args[0] and ref $args[0] eq "HASH" ) {
+        $args[0]->{'-output'} = $fh;
+    }
+    else {
+        unshift @args, { '-output' => $fh };
+    }
+    podselect @args;
+    return $selected;
+}
+
 has getopt_class => (
     is       => "rw",
     isa      => "ClassName",
@@ -71,8 +86,7 @@ sub _build_format {
     my $pod_file = $self->pod_file;
     my $selected = "";
     if ( $pod_file ) {
-        open my $fh, ">", \$selected or die;
-        podselect {-sections => ["SYNOPSIS"], -output => $fh}, $pod_file;
+        $selected = podselect_text {-sections => ["SYNOPSIS"] }, $pod_file;
         $selected =~ s{^=head1.*?\n$}{}mg;
         $selected =~ s{^.*?\n}{};
         $selected =~ s{\n$}{};
@@ -106,21 +120,12 @@ has tabstop => (
     default => 4,
 );
 
-sub usage {
+sub _set_color_handling {
     my $self = shift;
-    my $args = { @_ };
+    my $mode = shift;
 
-    my $exit = $args->{exit};
-    my $err  = $self->{err} || "";
-
-    my $colours   = $self->colours;
-    my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
-    my $format    = $args->{format}   || $self->format;
-    my $options   = defined $args->{options} ? $args->{options} : 1;
-
-    # Set the color handling for this call
-    local $ENV{ANSI_COLORS_DISABLED} = defined $ENV{ANSI_COLORS_DISABLED} ? 1 : undef;
-    given ($args->{use_color} || $self->use_color) {
+    $ENV{ANSI_COLORS_DISABLED} = defined $ENV{ANSI_COLORS_DISABLED} ? 1 : undef;
+    given ($mode) {
         when ('auto') {
             if ( not defined $ENV{ANSI_COLORS_DISABLED} ) {
                 $ENV{ANSI_COLORS_DISABLED} = -t STDOUT ? undef : 1;
@@ -134,6 +139,22 @@ sub usage {
         }
         # 'env' is done in the local line above
     }
+}
+
+sub usage {
+    my $self = shift;
+    my $args = { @_ };
+
+    my $exit = $args->{exit};
+    my $err  = $self->{err} || "";
+
+    my $colours   = $self->colours;
+    my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
+    my $format    = $args->{format}   || $self->format;
+    my $options   = defined $args->{options} ? $args->{options} : 1;
+
+    # Set the color handling for this call
+    $self->_set_color_handling( $args->{use_color} || $self->use_color );
 
     my $out = "";
     $out .= colored($colours->{error}, $err)."\n" if $err;
@@ -188,25 +209,47 @@ sub manpage {
     my $self   = shift;
     my $gclass = $self->getopt_class;
 
+    $self->_set_color_handling('never');
+
+    my $pod = podselect_text( $self->pod_file );
+    # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.
+    # Insert SYNOPSIS if not there. After NAME or top of pod.
+    unless ($pod =~ m/^=head1\s+SYNOPSIS\s+$/ms) {
+        my $synopsis = "\n=head1 SYNOPSIS\n\n".$self->format."\n";
+        if ($pod =~ m/^=head1\s+NAME\s+$/ms) {
+            $pod =~ s/(^=head1\s+NAME\s+\n.*?)(^=|\z)/$1$synopsis\n\n$2/ms;
+        }
+        else {
+            $pod = "$synopsis\n$pod";
+        }
+    }
+    # Insert OPTIONS if not there. After DESCRIPTION or end of pod.
+    unless ($pod =~ m/^=head1\s+OPTIONS\s+$/ms) {
+        my $newpod = "\n=head1 OPTIONS\n\n";
+        if ($pod =~ m/^=head1\s+DESCRIPTION\s+$/ms) {
+            $pod =~ s/(^=head1\s+DESCRIPTION\s+\n.*?)(^=|\z)/$1$newpod$2/ms;
+        }
+        else {
+            $pod = "$pod\n$newpod";
+        }
+    }
+
+    # Process the SYNOPSIS
+    $pod =~ s/(^=head1\s+SYNOPSIS\s+\n)(.*?)(^=|\z)/$1.$self->_parse_format($2).$3/mes;
+
+    # Add options list to OPTIONS
     #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
+    my $options_pod = "";
     my @attrs = $gclass->_compute_getopt_attrs;
-    my $usage = "\n=head1 SYNOPSIS\n\n";
-    $usage .= $self->usage(
-        headings  => 0,
-        use_color => 'never',
-        options   => 0,
-    );
-    $usage .= "\n=head1 OPTIONS\n\n";
-    $usage .= "=over 4\n\n";
+    $options_pod .= "=over 4\n\n";
     foreach my $attr (@attrs) {
         my $label = $self->_attr_label($attr);
-        $usage .= "=item B<$label>\n\n";
-        $usage .= $attr->documentation."\n\n";
+        $options_pod .= "=item B<$label>\n\n";
+        $options_pod .= $attr->documentation."\n\n";
     }
-    $usage .= "=back\n\n";
+    $options_pod .= "=back\n\n";
+    $pod =~ s/(^=head1\s+OPTIONS\s+\n.*?)(^=|\z)/$1\n$options_pod$2/ms;
 
-    my $pod = slurp $self->pod_file;
-    $pod =~ s/(^=head1 DESCRIPTION.*?$)/$usage\n$1\n/ms;
     open my $fh, "<", \$pod or die;
     pod2usage( -verbose => 2, -input => $fh );
 }
@@ -317,6 +360,10 @@ MooseX::Getopt::Usage::Formatter -
 =head2 unexpand
 
 =head2 tabstop
+
+=head1 FUNCTIONS
+
+=head2 podselect_text
 
 =head1 METHODS
 

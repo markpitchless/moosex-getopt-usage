@@ -4,14 +4,14 @@ NAME
 SYNOPSIS
         manpage [OPTIONS]
 
+DESCRIPTION
+    This program will read the given input file(s) and do something useful
+    with the contents thereof.
+
 OPTIONS
     --help -? --usage
         Display the usage message and exit
 
     --man
         Display man page
-
-DESCRIPTION
-    This program will read the given input file(s) and do something useful
-    with the contents thereof.
 

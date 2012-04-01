@@ -5,6 +5,8 @@ SYNOPSIS
         hello$ podusage [OPTIONS] [FILE]
 
 OPTIONS
+    Some extra options text.
+
     --help -? --usage
         Display the usage message and exit
 
@@ -14,4 +16,7 @@ OPTIONS
 DESCRIPTION
     This program will read the given input file(s) and do something useful
     with the contents thereof.
+
+AUTHOR
+    Mr Hand
 
