@@ -10,6 +10,7 @@ use Term::ANSIColor;
 use Term::ReadKey;
 use Text::Wrap;
 use Pod::Usage;
+use Pod::Select;
 use Pod::Find qw(pod_where);
 use File::Slurp qw(slurp);
 use File::Basename;
@@ -26,6 +27,19 @@ has getopt_class => (
     isa      => "ClassName",
     required => 1,
 );
+
+has pod_file => (
+    is      => "rw",
+    isa     => "Undef|Str",
+    lazy_build => 1,
+);
+
+sub _build_pod_file {
+    my $self = shift;
+    my $file = pod_where( {-inc => 1}, $self->getopt_class );
+    return $file;
+}
+
 
 has colours => (
     is      => "rw",
@@ -49,8 +63,22 @@ has headings => (
 has format => (
     is      => "rw",
     isa     => "Str",
-    default => "Usage:\n    %c [OPTIONS]",
+    lazy_build => 1,
 );
+
+sub _build_format {
+    my $self = shift;
+    my $pod_file = $self->pod_file;
+    my $selected = "";
+    if ( $pod_file ) {
+        open my $fh, ">", \$selected or die;
+        podselect {-sections => ["SYNOPSIS"], -output => $fh}, $pod_file;
+        $selected =~ s{^=head1.*?\n$}{}mg;
+        $selected =~ s{^.*?\n}{};
+        $selected =~ s{\n$}{};
+    }
+    return $selected ? $selected : "Usage:\n    %c [OPTIONS]";
+}
 
 has attr_sort => (
     is      => "rw",
@@ -171,8 +199,7 @@ sub manpage {
     }
     $usage .= "=back\n\n";
 
-    my $podfile = pod_where( {-inc => 1}, $gclass );
-    my $pod = slurp $podfile;
+    my $pod = slurp $self->pod_file;
     $pod =~ s/(^=head1 DESCRIPTION.*?$)/$usage\n$1\n/ms;
     open my $fh, "<", \$pod or die;
     pod2usage( -verbose => 2, -input => $fh );
