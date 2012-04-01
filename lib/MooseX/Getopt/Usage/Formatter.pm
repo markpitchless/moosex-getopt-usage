@@ -214,20 +214,20 @@ sub manpage {
     my $pod = podselect_text( $self->pod_file );
     # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.
     # Insert SYNOPSIS if not there. After NAME or top of pod.
-    unless ($pod =~ m/^=head1\s+SYNOPSIS\s+$/ms) {
+    unless ($pod =~ m/^=head1\s+SYNOPSIS\s*$/ms) {
         my $synopsis = "\n=head1 SYNOPSIS\n\n".$self->format."\n";
-        if ($pod =~ m/^=head1\s+NAME\s+$/ms) {
-            $pod =~ s/(^=head1\s+NAME\s+\n.*?)(^=|\z)/$1$synopsis\n\n$2/ms;
+        if ($pod =~ m/^=head1\s+NAME\s*$/ms) {
+            $pod =~ s/(^=head1\s+NAME\s*\n.*?)(^=|\z)/$1$synopsis\n\n$2/ms;
         }
         else {
             $pod = "$synopsis\n$pod";
         }
     }
     # Insert OPTIONS if not there. After DESCRIPTION or end of pod.
-    unless ($pod =~ m/^=head1\s+OPTIONS\s+$/ms) {
+    unless ($pod =~ m/^=head1\s+OPTIONS\s*$/ms) {
         my $newpod = "\n=head1 OPTIONS\n\n";
-        if ($pod =~ m/^=head1\s+DESCRIPTION\s+$/ms) {
-            $pod =~ s/(^=head1\s+DESCRIPTION\s+\n.*?)(^=|\z)/$1$newpod$2/ms;
+        if ($pod =~ m/^=head1\s+DESCRIPTION\s*$/ms) {
+            $pod =~ s/(^=head1\s+DESCRIPTION\s*\n.*?)(^=|\z)/$1$newpod$2/ms;
         }
         else {
             $pod = "$pod\n$newpod";
@@ -235,7 +235,7 @@ sub manpage {
     }
 
     # Process the SYNOPSIS
-    $pod =~ s/(^=head1\s+SYNOPSIS\s+\n)(.*?)(^=|\z)/$1.$self->_parse_format($2).$3/mes;
+    $pod =~ s/(^=head1\s+SYNOPSIS\s*\n)(.*?)(^=|\z)/$1.$self->_parse_format($2).$3/mes;
 
     # Add options list to OPTIONS
     #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
@@ -248,7 +248,7 @@ sub manpage {
         $options_pod .= $attr->documentation."\n\n";
     }
     $options_pod .= "=back\n\n";
-    $pod =~ s/(^=head1\s+OPTIONS\s+\n.*?)(^=|\z)/$1\n$options_pod$2/ms;
+    $pod =~ s/(^=head1\s+OPTIONS\s*\n.*?)(^=|\z)/$1\n$options_pod$2/ms;
 
     open my $fh, "<", \$pod or die;
     pod2usage( -verbose => 2, -input => $fh );
