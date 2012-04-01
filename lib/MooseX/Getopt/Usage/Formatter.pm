@@ -113,11 +113,10 @@ sub usage {
     my $exit = $args->{exit};
     my $err  = $self->{err} || "";
 
-    my $gclass    = $self->getopt_class;
     my $colours   = $self->colours;
     my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
     my $format    = $args->{format}   || $self->format;
-    my $attr_sort = $self->attr_sort;
+    my $options   = defined $args->{options} ? $args->{options} : 1;
 
     # Set the color handling for this call
     local $ENV{ANSI_COLORS_DISABLED} = defined $ENV{ANSI_COLORS_DISABLED} ? 1 : undef;
@@ -136,11 +135,33 @@ sub usage {
         # 'env' is done in the local line above
     }
 
+    my $out = "";
+    $out .= colored($colours->{error}, $err)."\n" if $err;
+    $out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
+    $out .= $self->_parse_format($format)."\n";
+    $out .= $self->_options_text if $options;
+
+    if ( defined $exit ) {
+        print $out;
+        exit $exit;
+    }
+    return $out;
+}
+
+sub _options_text {
+    my $self = shift;
+    my $args = { @_ };
+
+    my $gclass    = $self->getopt_class;
+    my $colours   = $self->colours;
+    my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
+    my $attr_sort = $self->attr_sort;
+
     my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
     foreach (@attrs) {
-        my $len  = length($self->_getopt_usage_attr_label($_));
+        my $len  = length($self->_attr_label($_));
         $max_len = $len if $len > $max_len;
         if ( $_->is_required && !$_->has_default && !$_->has_builder ) {
             push @req_attrs, $_;
@@ -150,26 +171,16 @@ sub usage {
         }
     }
 
-    my ($w) = GetTerminalSize;
-    local $Text::Wrap::columns = $w -1 || 72;
-
     my $out = "";
-    $out .= colored($colours->{error}, $err)."\n" if $err;
-    $out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
-    $out .= $self->_getopt_usage_parse_format($format)."\n";
     $out .= colored($colours->{heading}, "Required:")."\n"
         if $headings && @req_attrs;
-    $out .= $self->_getopt_usage_attr($_, max_len => $max_len )."\n"
+    $out .= $self->_attr_str($_, max_len => $max_len )."\n"
         foreach @req_attrs;
     $out .= colored($colours->{heading}, "Options:")."\n"
         if $headings && @opt_attrs;
-    $out .= $self->_getopt_usage_attr($_, max_len => $max_len )."\n"
+    $out .= $self->_attr_str($_, max_len => $max_len )."\n"
         foreach @opt_attrs;
 
-    if ( defined $exit ) {
-        print $out;
-        exit $exit;
-    }
     return $out;
 }
 
@@ -180,14 +191,15 @@ sub manpage {
     #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
     my @attrs = $gclass->_compute_getopt_attrs;
     my $usage = "\n=head1 SYNOPSIS\n\n";
-    $usage .= " ".$self->usage(
+    $usage .= $self->usage(
         headings  => 0,
         use_color => 'never',
+        options   => 0,
     );
     $usage .= "\n=head1 OPTIONS\n\n";
     $usage .= "=over 4\n\n";
     foreach my $attr (@attrs) {
-        my $label = $self->_getopt_usage_attr_label($attr);
+        my $label = $self->_attr_label($attr);
         $usage .= "=item B<$label>\n\n";
         $usage .= $attr->documentation."\n\n";
     }
@@ -199,7 +211,7 @@ sub manpage {
     pod2usage( -verbose => 2, -input => $fh );
 }
 
-sub _getopt_usage_parse_format {
+sub _parse_format {
     my $self    = shift;
     my $fmt     = shift or confess "No format";
     my $colours = $self->colours;
@@ -209,13 +221,13 @@ sub _getopt_usage_parse_format {
     # TODO - Be good to have a include that generates a list of the opts
     #        %r - required  %a - all  %o - options
     $fmt =~ s/^(Usage:)/colored $colours->{heading}, "$1"/e;
-    $self->_getopt_usage_colourise(\$fmt);
+    $self->_colourise(\$fmt);
     return $fmt;
 }
 
 
 # Return the full label, including aliases and dashes, for the passed attribute
-sub _getopt_usage_attr_label {
+sub _attr_label {
     my $self   = shift;
     my $attr   = shift || confess "No attr";
     my $gclass = $self->getopt_class;
@@ -228,17 +240,19 @@ sub _getopt_usage_attr_label {
 }
 
 # Return the formated and coloured usage string for the passed attribute.
-sub _getopt_usage_attr {
+sub _attr_str {
     my $self    = shift;
     my $attr    = shift or confess "No attr";
     my %args    = @_;
     my $max_len = $args{max_len} or confess "No max_len";
     my $colours = $self->colours;
 
+    my ($w) = GetTerminalSize;
+    local $Text::Wrap::columns = $w -1 || 72;
     local $Text::Wrap::unexpand = $self->unexpand;
     local $Text::Wrap::tabstop  = $self->tabstop;
 
-    my $label = $self->_getopt_usage_attr_label($attr);
+    my $label = $self->_attr_label($attr);
 
     my $docs  = "";
     my $pad   = $max_len - length($label);
@@ -252,12 +266,12 @@ sub _getopt_usage_attr {
     my $col1 = "    $label";
     $col1 .= "".( " " x $pad );
     my $out = wrap($col1, (" " x ($max_len + 9)), " - $docs" );
-    $self->_getopt_usage_colourise(\$out);
+    $self->_colourise(\$out);
     return $out;
 }
 
 # Extra colourisation for the attributes usage string. Think syntax highlight.
-sub _getopt_usage_colourise {
+sub _colourise {
     my $self    = shift;
     my $out     = shift || "";
     my $colours = $self->colours;
