@@ -63,7 +63,7 @@ around new_with_options => sub {
         when (/Attribute \((\w+)\) is required /) {
             $class->getopt_usage( exit => 2, err => "Required option missing: $1" );
         }
-        when (/^Unknown option:|^Value .*? for option/) {
+        when (/^Unknown option:|^Value .*? for option |Option .* does not take an argument/) {
             # Getopt::Long warnings we promoted in _getopt_spec_warnings
             s/\n+$//;
             $class->getopt_usage( exit => 3, err => $_ );

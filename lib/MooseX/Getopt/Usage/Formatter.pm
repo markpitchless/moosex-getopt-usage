@@ -146,7 +146,7 @@ sub usage {
     my $args = { @_ };
 
     my $exit = $args->{exit};
-    my $err  = $self->{err} || "";
+    my $err  = $args->{err} || "";
 
     my $colours   = $self->colours;
     my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
