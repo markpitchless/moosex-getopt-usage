@@ -77,7 +77,7 @@ sub _build_format {
         $selected =~ s{^.*?\n}{};
         $selected =~ s{\n$}{};
     }
-    return $selected ? $selected : "Usage:\n    %c [OPTIONS]";
+    return $selected ? $selected : "    %c [OPTIONS]";
 }
 
 has attr_sort => (
@@ -155,6 +155,7 @@ sub usage {
 
     my $out = "";
     $out .= colored($colours->{error}, $err)."\n" if $err;
+    $out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
     $out .= $self->_getopt_usage_parse_format($format)."\n";
     $out .= colored($colours->{heading}, "Required:")."\n"
         if $headings && @req_attrs;
@@ -172,23 +173,16 @@ sub usage {
     return $out;
 }
 
-my $USAGE_FORMAT = <<EOFORMAT;
-
-=head1 SYNOPSIS
-
-    %c [options]
-EOFORMAT
-
 sub manpage {
     my $self   = shift;
     my $gclass = $self->getopt_class;
 
     #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
     my @attrs = $gclass->_compute_getopt_attrs;
-    my $usage = $self->usage(
+    my $usage = "\n=head1 SYNOPSIS\n\n";
+    $usage .= " ".$self->usage(
         headings  => 0,
         use_color => 'never',
-        format    => $USAGE_FORMAT,
     );
     $usage .= "\n=head1 OPTIONS\n\n";
     $usage .= "=over 4\n\n";

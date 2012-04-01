@@ -2,10 +2,7 @@ NAME
     manpage - Using MooseX::Getopt::Usage and Pod::Usage
 
 SYNOPSIS
-        manpage [options]
-
-        --help -? --usage - Bool. Display the usage message and exit
-        --man             - Bool. Display man page
+        manpage [OPTIONS]
 
 OPTIONS
     --help -? --usage

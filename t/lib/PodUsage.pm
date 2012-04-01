@@ -14,8 +14,7 @@ podusage - Reading usage format from POD.
 
 =head1 SYNOPSIS 
 
-Hello:
-    %c
+    hello$ %c [OPTIONS] [FILE]
 
 =head1 DESCRIPTION
 

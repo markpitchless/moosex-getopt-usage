@@ -1,11 +1,8 @@
 NAME
-    podusage - Using MooseX::Getopt::Usage and Pod::Usage
+    podusage - Reading usage format from POD.
 
 SYNOPSIS
-        podusage [options]
-
-        --help -? --usage - Bool. Display the usage message and exit
-        --man             - Bool. Display man page
+        hello$ podusage [OPTIONS] [FILE]
 
 OPTIONS
     --help -? --usage

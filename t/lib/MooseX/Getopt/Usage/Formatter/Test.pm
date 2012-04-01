@@ -26,10 +26,10 @@ sub format : Test(2) {
     my $self = shift;
 
     my $fmtr = MooseX::Getopt::Usage::Formatter->new( getopt_class => 'Basic' );
-    is $fmtr->format, "Usage:\n    %c [OPTIONS]", "Default when no POD";
+    is $fmtr->format, "    %c [OPTIONS]", "Default when no POD";
 
     $fmtr = MooseX::Getopt::Usage::Formatter->new( getopt_class => 'PodUsage' );
-    is $fmtr->format, "Hello:\n    %c\n", "Reads from POD";
+    is $fmtr->format, "    hello\$ %c [OPTIONS] [FILE]\n", "Reads from POD";
 }
 
 1;
