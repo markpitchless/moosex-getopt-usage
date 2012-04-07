@@ -11,9 +11,11 @@ use Term::ReadKey;
 use Text::Wrap;
 use Pod::Usage;
 use Pod::Select;
-use Pod::Find qw(pod_where);
+use Pod::Find qw(pod_where contains_pod);
 use File::Slurp qw(slurp);
 use File::Basename;
+use Module::Loaded;
+use FindBin;
 
 BEGIN {
     # Grab prog name before someone decides to change it.
@@ -51,10 +53,18 @@ has pod_file => (
 
 sub _build_pod_file {
     my $self = shift;
-    my $file = pod_where( {-inc => 1}, $self->getopt_class );
-    return $file;
+    my $gclass = $self->getopt_class;
+    if ( is_loaded($gclass) ) {
+        return pod_where( {-inc => 1}, $gclass );
+    }
+    else {
+        # Class doesn't seem to be loaded (used) so try the script file. E.g. a
+        # class definition and main pkg runner all in one file.
+        my $file = "$FindBin::Bin/$FindBin::Script";
+        return $file if -f $file && contains_pod($file);
+    }
+    return undef;
 }
-
 
 has colours => (
     is      => "rw",
@@ -267,7 +277,6 @@ sub _parse_format {
     $self->_colourise(\$fmt);
     return $fmt;
 }
-
 
 # Return the full label, including aliases and dashes, for the passed attribute
 sub _attr_label {
