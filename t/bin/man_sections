@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-package ManSelect;
+package ManSections;
 use strict;
 use warnings;
 
@@ -8,14 +8,14 @@ with 'MooseX::Getopt::Usage';
 with 'MooseX::Getopt::Usage::Role::Man';
 
 sub getopt_usage_config {
-    return ( man_select => ["AUTHOR"] );
+    return ( man_sections => ["AUTHOR"] );
 }
 
 =pod
 
 =head1 NAME
 
-man_select - Test man_select option.
+man_sections - Test man_sections option.
 
 =head1 SYNOPSIS
 
@@ -39,4 +39,4 @@ Invader Scouge
 1;
 
 package main;
-ManSelect->new_with_options;
+ManSections->new_with_options;

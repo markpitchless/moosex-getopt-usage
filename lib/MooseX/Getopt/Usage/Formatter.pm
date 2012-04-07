@@ -118,10 +118,10 @@ has use_color => (
     default => "auto",
 );
 
-has man_select => (
+has man_sections => (
     is      => "rw",
     isa     => "ArrayRef",
-    default => sub { ["!ATTRIBUTES"] },
+    default => sub { ["!ATTRIBUTES|METHODS"] },
 );
 
 has unexpand => (
@@ -228,7 +228,7 @@ sub manpage {
     $self->_set_color_handling('never');
 
     my $pod = podselect_text(
-        { -sections => $self->man_select },
+        { -sections => $self->man_sections },
         $self->pod_file );
 
     # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.

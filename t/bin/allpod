@@ -9,6 +9,8 @@ with 'MooseX::Getopt::Usage::Role::Man';
 
 has doom => ( is => 'ro', isa => 'Int' );
 
+sub doomify {}
+
 =pod
 
 =head1 NAME
@@ -33,6 +35,12 @@ Sets the level of doom!
 
 B<This program> will read the given input ALIENS and do something
 useful with the contents thereof.
+
+=head1 METHODS
+
+=head2 doomify
+
+Doom! Doom! Doom!
 
 =head1 AUTHOR
 

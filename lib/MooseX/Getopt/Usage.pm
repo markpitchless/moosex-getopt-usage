@@ -248,20 +248,25 @@ L<Term::ANSIColor>. Default looks like this:
         error         => ['red']
     }
 
-=head2 man_select
+=head2 man_sections
 
 When generating a man page the POD sections to select. Default is everything
-except ATTRIBUTES (as we will generate an OPTIONS section instead).
+except ATTRIBUTES and METHODS (as we will generate an OPTIONS section instead
+of ATTRIBUTES and METHODS isn't relevant to command line users).
 Value is an array ref of L<Pod::Select/SECTION SPECIFICATIONS> strings.
 
-e.g. to not include METHODS, keeping the ATTRIBUTES default you would do:
+Use an empty array to include all POD sections.
 
- man_select => ["!ATTRIBUTES", "!METHODS"],
+ man_sections => [],
+
+e.g. to exclude TODO, keeping the default excludes you could do:
+
+ man_sections => ["!ATTRIBUTES|METHODS","!TODO"],
 
 or maybe you only want the NAME and DESCRIPTION (along with the generated
 SYNOPSIS and OPTIONS):
 
- man_select => ["NAME|DESCRIPTION"],
+ man_sections => ["NAME|DESCRIPTION"],
 
 =head2 unexpand
 

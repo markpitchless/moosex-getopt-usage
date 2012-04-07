@@ -1,5 +1,5 @@
 SYNOPSIS
-        man_select [OPTIONS] [MANS]
+        man_sections [OPTIONS] [MANS]
 
 OPTIONS
     --help -? --usage
