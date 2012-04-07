@@ -37,19 +37,22 @@ sub cmd_line_ok {
     my $self = shift;
     my $cmd  = shift;
 
-    my $stdout_ok = slurp "$Bin/bin.ok/$cmd.usage.ok";
-    my $stderr_ok = "";
-    foreach my $flag (qw/-? --help --usage/) {
-        my $cmd = "$cmd $flag";
-        my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
-        eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT";
-        eq_or_diff $stderr, $stderr_ok, "$cmd STDERR";
+    my $ok_file = "$Bin/bin.ok/$cmd.usage.ok";
+    if (-f $ok_file) {
+        my $stdout_ok = slurp($ok_file);
+        my $stderr_ok = "";
+        foreach my $flag (qw/-? --help --usage/) {
+            my $cmd = "$cmd $flag";
+            my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
+            eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT";
+            eq_or_diff $stderr, $stderr_ok, "$cmd STDERR";
+        }
     }
     
-    my $man_ok_file = "$Bin/bin.ok/$cmd.man.ok";
-    if (-f $man_ok_file) {
-        $stdout_ok = slurp($man_ok_file);
-        $stderr_ok = "";
+    $ok_file = "$Bin/bin.ok/$cmd.man.ok";
+    if (-f $ok_file) {
+        my $stdout_ok = slurp($ok_file);
+        my $stderr_ok = "";
         foreach my $flag (qw/--man/) {
             my $cmd = "$cmd $flag";
             my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
