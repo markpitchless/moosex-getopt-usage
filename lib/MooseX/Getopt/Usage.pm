@@ -248,6 +248,21 @@ L<Term::ANSIColor>. Default looks like this:
         error         => ['red']
     }
 
+=head2 man_select
+
+When generating a man page the POD sections to select. Default is everything
+except ATTRIBUTES (as we will generate an OPTIONS section instead).
+Value is an array ref of L<Pod::Select/SECTION SPECIFICATIONS> strings.
+
+e.g. to not include METHODS, keeping the ATTRIBUTES default you would do:
+
+ man_select => ["!ATTRIBUTES", "!METHODS"],
+
+or maybe you only want the NAME and DESCRIPTION (along with the generated
+SYNOPSIS and OPTIONS):
+
+ man_select => ["NAME|DESCRIPTION"],
+
 =head2 unexpand
 
 Set C<$Text::Wrap::unexpand>, see L<Text::Wrap/OVERRIDES>.

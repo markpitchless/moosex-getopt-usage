@@ -96,7 +96,7 @@ sub _build_format {
     my $pod_file = $self->pod_file;
     my $selected = "";
     if ( $pod_file ) {
-        $selected = podselect_text {-sections => ["SYNOPSIS"] }, $pod_file;
+        $selected = podselect_text { -sections => ["SYNOPSIS"] }, $pod_file;
         $selected =~ s{^=head1.*?\n$}{}mg;
         $selected =~ s{^.*?\n}{};
         $selected =~ s{\n$}{};
@@ -116,6 +116,12 @@ has use_color => (
     is      => "rw",
     isa     => "ColorUsage",
     default => "auto",
+);
+
+has man_select => (
+    is      => "rw",
+    isa     => "ArrayRef",
+    default => sub { ["!ATTRIBUTES"] },
 );
 
 has unexpand => (
@@ -221,7 +227,10 @@ sub manpage {
 
     $self->_set_color_handling('never');
 
-    my $pod = podselect_text( $self->pod_file );
+    my $pod = podselect_text(
+        { -sections => $self->man_select },
+        $self->pod_file );
+
     # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.
     # Insert SYNOPSIS if not there. After NAME or top of pod.
     unless ($pod =~ m/^=head1\s+SYNOPSIS\s*$/ms) {
@@ -233,11 +242,14 @@ sub manpage {
             $pod = "$synopsis\n$pod";
         }
     }
-    # Insert OPTIONS if not there. After DESCRIPTION or end of pod.
+    # Insert OPTIONS if not there. After DESCRIPTION or SYNOPSIS or end of pod.
     unless ($pod =~ m/^=head1\s+OPTIONS\s*$/ms) {
         my $newpod = "\n=head1 OPTIONS\n\n";
         if ($pod =~ m/^=head1\s+DESCRIPTION\s*$/ms) {
             $pod =~ s/(^=head1\s+DESCRIPTION\s*\n.*?)(^=|\z)/$1$newpod$2/ms;
+        }
+        elsif ($pod =~ m/^=head1\s+SYNOPSIS\s*$/ms) {
+            $pod =~ s/(^=head1\s+SYNOPSIS\s*\n.*?)(^=|\z)/$1$newpod$2/ms;
         }
         else {
             $pod = "$pod\n$newpod";
@@ -255,7 +267,7 @@ sub manpage {
     foreach my $attr (@attrs) {
         my $label = $self->_attr_label($attr);
         $options_pod .= "=item B<$label>\n\n";
-        $options_pod .= $attr->documentation."\n\n";
+        $options_pod .= ($attr->documentation || "")."\n\n";
     }
     $options_pod .= "=back\n\n";
     $pod =~ s/(^=head1\s+OPTIONS\s*\n.*?)(^=|\z)/$1\n$options_pod$2/ms;

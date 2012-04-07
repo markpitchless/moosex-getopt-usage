@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+package ManSelect;
+use strict;
+use warnings;
+
+use Moose;
+with 'MooseX::Getopt::Usage';
+with 'MooseX::Getopt::Usage::Role::Man';
+
+sub getopt_usage_config {
+    return ( man_select => ["AUTHOR"] );
+}
+
+=pod
+
+=head1 NAME
+
+man_select - Test man_select option.
+
+=head1 SYNOPSIS
+
+    %c [OPTIONS] [MANS]
+
+=head1 OPTIONS
+
+Some extra options text.
+
+=head1 DESCRIPTION
+
+B<This program> will read the given input MANS and do something
+useful with the contents thereof.
+
+=head1 AUTHOR
+
+Invader Scouge
+
+=cut
+
+1;
+
+package main;
+ManSelect->new_with_options;

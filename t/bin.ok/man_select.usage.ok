@@ -1,0 +1,6 @@
+Usage:
+    man_select [OPTIONS] [MANS]
+
+Options:
+    --help -? --usage - Bool. Display the usage message and exit
+    --man             - Bool. Display man page

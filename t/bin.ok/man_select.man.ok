@@ -1,0 +1,13 @@
+SYNOPSIS
+        man_select [OPTIONS] [MANS]
+
+OPTIONS
+    --help -? --usage
+        Display the usage message and exit
+
+    --man
+        Display man page
+
+AUTHOR
+    Invader Scouge
+
