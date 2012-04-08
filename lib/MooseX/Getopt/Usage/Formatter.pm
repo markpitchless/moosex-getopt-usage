@@ -39,6 +39,17 @@ sub podselect_text {
     return $selected;
 }
 
+#
+# Types
+
+subtype 'PodSelectList', as 'ArrayRef[Str]';
+
+enum 'ColorUsage', [qw(auto never always env)];
+
+
+#
+# Attributes
+
 has getopt_class => (
     is       => "rw",
     isa      => "ClassName",
@@ -110,8 +121,6 @@ has attr_sort => (
     default => sub { sub {0} },
 );
 
-enum 'ColorUsage', [qw(auto never always env)];
-
 has use_color => (
     is      => "rw",
     isa     => "ColorUsage",
@@ -120,7 +129,7 @@ has use_color => (
 
 has man_sections => (
     is      => "rw",
-    isa     => "ArrayRef",
+    isa     => "PodSelectList",
     default => sub { ["!ATTRIBUTES|METHODS"] },
 );
 
@@ -135,6 +144,9 @@ has tabstop => (
     isa     => "Int",
     default => 4,
 );
+
+#
+# Methods
 
 sub _set_color_handling {
     my $self = shift;
@@ -257,7 +269,11 @@ sub manpage {
     }
 
     # Process the SYNOPSIS
-    $pod =~ s/(^=head1\s+SYNOPSIS\s*\n)(.*?)(^=|\z)/$1.$self->_parse_format($2).$3/mes;
+    $pod =~ s/
+            (^=head1\s+SYNOPSIS\s*\n)  # The header $1
+            (.*?)                      # Content $2
+            (^=|\z)                    # Next section or eof $3
+        /$1.$self->_parse_format($2).$3/mesx;
 
     # Add options list to OPTIONS
     #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
@@ -285,7 +301,7 @@ sub _parse_format {
     $fmt =~ s/%%/%/g;
     # TODO - Be good to have a include that generates a list of the opts
     #        %r - required  %a - all  %o - options
-    $fmt =~ s/^(Usage:)/colored $colours->{heading}, "$1"/e;
+    $fmt =~ s/^(.*?:\n)/colored $colours->{heading}, "$1"/egm;
     $self->_colourise(\$fmt);
     return $fmt;
 }
