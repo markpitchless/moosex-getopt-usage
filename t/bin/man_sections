@@ -8,7 +8,11 @@ with 'MooseX::Getopt::Usage';
 with 'MooseX::Getopt::Usage::Role::Man';
 
 sub getopt_usage_config {
-    return ( man_sections => ["AUTHOR"] );
+    return (
+        man_sections    => ["AUTHOR"],
+        header_sections => ["NAME"],
+        footer_sections => ["AUTHOR"],
+    );
 }
 
 =pod

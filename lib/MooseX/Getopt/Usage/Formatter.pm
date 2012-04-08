@@ -96,6 +96,25 @@ has headings => (
     default => 1,
 );
 
+has format_sections => (
+    is      => "rw",
+    isa     => "PodSelectList",
+    default => sub { ["SYNOPSIS"] },
+);
+
+has header_sections => (
+    is      => "rw",
+    isa     => "PodSelectList",
+    default => sub { ["!"] }, # None
+);
+
+has footer_sections => (
+    is      => "rw",
+    isa     => "PodSelectList",
+    default => sub { ["!"] }, # None
+);
+
+
 has format => (
     is      => "rw",
     isa     => "Str",
@@ -104,15 +123,27 @@ has format => (
 
 sub _build_format {
     my $self = shift;
+
+    my $selected = $self->_podselect_for_usage($self->format_sections);
+    return "    %c [OPTIONS]" unless $selected;
+
+    $selected =~ s{^.*?:\n\n?}{}mg;
+    $selected =~ s{\n$}{};
+    return $selected;
+}
+
+sub _podselect_for_usage {
+    my $self     = shift;
+    my $sections = shift;
     my $pod_file = $self->pod_file;
     my $selected = "";
-    if ( $pod_file ) {
-        $selected = podselect_text { -sections => ["SYNOPSIS"] }, $pod_file;
-        $selected =~ s{^=head1.*?\n$}{}mg;
-        $selected =~ s{^.*?\n}{};
-        $selected =~ s{\n$}{};
-    }
-    return $selected ? $selected : "    %c [OPTIONS]";
+    return $selected unless $pod_file;
+
+    $selected = podselect_text { -sections => $sections }, $pod_file;
+    $selected =~ s{^=head1 (.*?)\n$}{$1:}mg;
+    $selected =~ s{^=pod(.*?)\n\n?}{}mg;
+    #$selected =~ s{\n$}{};
+    return $selected;
 }
 
 has attr_sort => (
@@ -186,9 +217,11 @@ sub usage {
 
     my $out = "";
     $out .= colored($colours->{error}, $err)."\n" if $err;
+    $out .= $self->_podselect_for_usage($self->header_sections);
     $out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
     $out .= $self->_parse_format($format)."\n";
     $out .= $self->_options_text if $options;
+    $out .= $self->_podselect_for_usage($self->footer_sections);
 
     if ( defined $exit ) {
         print $out;
