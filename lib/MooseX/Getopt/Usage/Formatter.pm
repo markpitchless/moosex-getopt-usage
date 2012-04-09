@@ -12,6 +12,7 @@ use Text::Wrap;
 use Pod::Usage;
 use Pod::Select;
 use Pod::Find qw(pod_where contains_pod);
+use Pod::Text;
 use File::Slurp qw(slurp);
 use File::Basename;
 use Module::Loaded;
@@ -127,6 +128,12 @@ has use_color => (
     default => "auto",
 );
 
+has usage_sections => (
+    is      => "rw",
+    isa     => "PodSelectList",
+    default => sub { ["SYNOPSIS|OPTIONS"] },
+);
+
 has man_sections => (
     is      => "rw",
     isa     => "PodSelectList",
@@ -176,19 +183,25 @@ sub usage {
     my $exit = $args->{exit};
     my $err  = $args->{err} || "";
 
-    my $colours   = $self->colours;
-    my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
-    my $format    = $args->{format}   || $self->format;
-    my $options   = defined $args->{options} ? $args->{options} : 1;
+    #my $colours   = $self->colours;
+    #my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
+    #my $format    = $args->{format}   || $self->format;
+    #my $options   = defined $args->{options} ? $args->{options} : 1;
 
     # Set the color handling for this call
     $self->_set_color_handling( $args->{use_color} || $self->use_color );
 
-    my $out = "";
-    $out .= colored($colours->{error}, $err)."\n" if $err;
-    $out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
-    $out .= $self->_parse_format($format)."\n";
-    $out .= $self->_options_text if $options;
+    my $pod = $self->_get_pod( sections => $self->usage_sections );
+    my $parser = Pod::Text->new();
+    my $out;
+    $parser->output_string(\$out);
+    $parser->parse_string_document($pod);
+
+    #my $out = "";
+    #$out .= colored($colours->{error}, $err)."\n" if $err;
+    #$out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
+    #$out .= $self->_parse_format($format)."\n";
+    #$out .= $self->_options_text if $options;
 
     if ( defined $exit ) {
         print $out;
@@ -251,7 +264,8 @@ sub _get_pod {
     my $sections = $args{sections} || [];
     my $gclass   = $self->getopt_class;
 
-    my $pod = podselect_text( { -sections => $sections }, $self->pod_file );
+    # Grab all the pod text (strips out the code).
+    my $pod = podselect_text( $self->pod_file );
 
     # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.
     # Insert SYNOPSIS if not there. After NAME or top of pod.
@@ -299,7 +313,14 @@ sub _get_pod {
             (^=|\z)                    # Next section or eof $3
         /$1.$self->_parse_format($2).$3/mesx;
 
-    return $pod;
+    # Select again to trim down to just the sections asked for.
+    my $out = "";
+    open my $fhin,  "<", \$pod or die;
+    open my $fhout, ">", \$out or die;
+    my $selector = Pod::Select->new();
+    $selector->select(@$sections);
+    $selector->parse_from_filehandle($fhin, $fhout);
+    return $out;
 }
 
 sub _parse_format {
