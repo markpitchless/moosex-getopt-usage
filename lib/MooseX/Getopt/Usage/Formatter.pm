@@ -93,8 +93,8 @@ has colours => (
 
 has headings => (
     is      => "rw",
-    isa     => "Bool",
-    default => 1,
+    isa     => "Undef|Bool",
+    default => undef,
 );
 
 has format => (
@@ -180,69 +180,28 @@ sub usage {
     my $self = shift;
     my $args = { @_ };
 
-    my $exit = $args->{exit};
-    my $err  = $args->{err} || "";
-
-    #my $colours   = $self->colours;
-    #my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
-    #my $format    = $args->{format}   || $self->format;
-    #my $options   = defined $args->{options} ? $args->{options} : 1;
+    my $exit    = $args->{exit};
+    my $err     = $args->{err} || "";
+    my $colours = $self->colours;
 
     # Set the color handling for this call
     $self->_set_color_handling( $args->{use_color} || $self->use_color );
 
-    my $pod = $self->_get_pod( sections => $self->usage_sections );
+    my $pod = $self->_get_pod(
+        sections      => $self->usage_sections,
+        options_style => 'text',
+    );
     my $parser = Pod::Text->new();
     my $out;
     $parser->output_string(\$out);
     $parser->parse_string_document($pod);
 
-    #my $out = "";
-    #$out .= colored($colours->{error}, $err)."\n" if $err;
-    #$out .= colored($colours->{heading}, "Usage:")."\n" if $headings;
-    #$out .= $self->_parse_format($format)."\n";
-    #$out .= $self->_options_text if $options;
+    $out = colored($colours->{error}, $err)."\n".$out if $err;
 
     if ( defined $exit ) {
         print $out;
         exit $exit;
     }
-    return $out;
-}
-
-sub _options_text {
-    my $self = shift;
-    my $args = { @_ };
-
-    my $gclass    = $self->getopt_class;
-    my $colours   = $self->colours;
-    my $headings  = defined $args->{headings} ? $args->{headings} : $self->headings;
-    my $attr_sort = $self->attr_sort;
-
-    my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
-    my $max_len = 0;
-    my (@req_attrs, @opt_attrs);
-    foreach (@attrs) {
-        my $len  = length($self->_attr_label($_));
-        $max_len = $len if $len > $max_len;
-        if ( $_->is_required && !$_->has_default && !$_->has_builder ) {
-            push @req_attrs, $_;
-        }
-        else {
-            push @opt_attrs, $_;
-        }
-    }
-
-    my $out = "";
-    $out .= colored($colours->{heading}, "Required:")."\n"
-        if $headings && @req_attrs;
-    $out .= $self->_attr_str($_, max_len => $max_len )."\n"
-        foreach @req_attrs;
-    $out .= colored($colours->{heading}, "Options:")."\n"
-        if $headings && @opt_attrs;
-    $out .= $self->_attr_str($_, max_len => $max_len )."\n"
-        foreach @opt_attrs;
-
     return $out;
 }
 
@@ -261,13 +220,14 @@ sub manpage {
 sub _get_pod {
     my $self = shift;
     my %args = @_;
-    my $sections = $args{sections} || [];
-    my $gclass   = $self->getopt_class;
+    my $opt_style = $args{options_style} || "pod";
+    my $sections  = $args{sections} || [];
+    my $gclass    = $self->getopt_class;
 
     # Grab all the pod text (strips out the code).
-    my $pod = podselect_text( $self->pod_file );
+    my $pod = $self->pod_file ? podselect_text( $self->pod_file ) : "";
 
-    # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.
+    # XXX Some dirty pod regexp hacking. Needs moving to a real parser.
     # Insert SYNOPSIS if not there. After NAME or top of pod.
     unless ($pod =~ m/^=head1\s+SYNOPSIS\s*$/ms) {
         my $synopsis = "\n=head1 SYNOPSIS\n\n".$self->format."\n";
@@ -294,24 +254,17 @@ sub _get_pod {
     }
 
     # Add options list to OPTIONS
-    #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
-    my $options_pod = "";
-    my @attrs = $gclass->_compute_getopt_attrs;
-    $options_pod .= "=over 4\n\n";
-    foreach my $attr (@attrs) {
-        my $label = $self->_attr_label($attr);
-        $options_pod .= "=item B<$label>\n\n";
-        $options_pod .= ($attr->documentation || "")."\n\n";
-    }
-    $options_pod .= "=back\n\n";
-    $pod =~ s/(^=head1\s+OPTIONS\s*\n.*?)(^=|\z)/$1\n$options_pod$2/ms;
+    my $meth = "_options_$opt_style";
+    my $options = $self->$meth;
+    $pod =~ s/(^=head1\s+OPTIONS\s*\n.*?)
+              (^=|\z)
+             /$1\n$options$2/msx;
 
     # Process the SYNOPSIS
-    $pod =~ s/
-            (^=head1\s+SYNOPSIS\s*\n)  # The header $1
-            (.*?)                      # Content $2
-            (^=|\z)                    # Next section or eof $3
-        /$1.$self->_parse_format($2).$3/mesx;
+    $pod =~ s/(^=head1\s+SYNOPSIS\s*\n)  # The header $1
+              (.*?)                      # Content $2
+              (^=|\z)                    # Next section or eof $3
+             /$1.$self->_parse_format($2).$3/mesx;
 
     # Select again to trim down to just the sections asked for.
     my $out = "";
@@ -320,6 +273,66 @@ sub _get_pod {
     my $selector = Pod::Select->new();
     $selector->select(@$sections);
     $selector->parse_from_filehandle($fhin, $fhout);
+    return $out;
+}
+
+# Generate POD version of the options from the meta info.
+sub _options_pod {
+    my $self   = shift;
+    my $gclass = $self->getopt_class;
+
+    my $options_pod = "";
+    #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
+    my @attrs = $gclass->_compute_getopt_attrs;
+    $options_pod .= "=over 4\n\n";
+    foreach my $attr (@attrs) {
+        my $label = $self->_attr_label($attr);
+        $options_pod .= "=item B<$label>\n\n";
+        $options_pod .= ($attr->documentation || "")."\n\n";
+    }
+    $options_pod .= "=back\n\n";
+    return $options_pod;
+}
+
+# Generate (colored) text version of the options from meta info.
+sub _options_text {
+    my $self = shift;
+    my $args = { @_ };
+
+    my $gclass    = $self->getopt_class;
+    my $colours   = $self->colours;
+    my $headings  = $self->headings;
+    my $attr_sort = $self->attr_sort;
+
+    my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
+    my $max_len = 0;
+    my (@req_attrs, @opt_attrs);
+    foreach (@attrs) {
+        my $len  = length($self->_attr_label($_));
+        $max_len = $len if $len > $max_len;
+        if ( $_->is_required && !$_->has_default && !$_->has_builder ) {
+            push @req_attrs, $_;
+        }
+        else {
+            push @opt_attrs, $_;
+        }
+    }
+
+    $headings  = @req_attrs ? 1 : 0 if not defined $headings; 
+    my $indent = $headings ? 4 : 0;
+
+    my $out = " ";
+    $out .= colored($colours->{heading}, "Required:")."\n"
+        if $headings && @req_attrs;
+    $out .= $self->_attr_str($_, max_len => $max_len, indent => $indent )."\n"
+        foreach @req_attrs;
+    $out .= colored($colours->{heading}, "Optional:")."\n"
+        if $headings && @opt_attrs;
+    $out .= $self->_attr_str($_, max_len => $max_len, indent => $indent )."\n"
+        foreach @opt_attrs;
+    $out =~ s{\n}{\n }gsm; # Make into pod preformat para
+    $out .= "\n\n";
+
     return $out;
 }
 
@@ -356,6 +369,7 @@ sub _attr_str {
     my $attr    = shift or confess "No attr";
     my %args    = @_;
     my $max_len = $args{max_len} or confess "No max_len";
+    my $indent  = $args{indent} || 0;
     my $colours = $self->colours;
 
     my ($w) = GetTerminalSize;
@@ -374,7 +388,7 @@ sub _attr_str {
         if $def && ! ref $def;
     $docs  .= $attr->documentation || "";
 
-    my $col1 = "    $label";
+    my $col1 = (" " x $indent).$label;
     $col1 .= "".( " " x $pad );
     my $out = wrap($col1, (" " x ($max_len + 9)), " - $docs" );
     $self->_colourise(\$out);
@@ -388,7 +402,7 @@ sub _colourise {
     my $colours = $self->colours;
 
     my $str = ref $out ? $out : \$out;
-    $$str =~ s/(\s--?[\w?]+)/colored $colours->{flag}, "$1"/ge;
+    $$str =~ s/((?:^|\s)--?[\w?]+)/colored $colours->{flag}, "$1"/ge;
     return ref $out ? $out : $$str;
 }
 
