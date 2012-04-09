@@ -6,6 +6,22 @@ our $VERSION = '0.01';
 
 use base qw(Pod::Text);
 
+sub new {
+    my $proto = shift;
+    my %args  = @_;
+    my $self  = $proto->SUPER::new(@_);
+    return unless $self;
+    $self->{headings} = exists $args{headings} ? $args{headings} : 1;
+    $self->{opt_indent} = 0 if !$self->{headings};
+    return $self;
+}
+
+sub heading {
+    my $self = shift;
+    return unless $self->{headings};
+    return $self->SUPER::heading(@_);
+}
+
 sub cmd_head1 {
     my ($self, $attrs, $text) = @_;
     $text =~ s{SYNOPSIS}{USAGE};
@@ -65,6 +81,8 @@ Does the following.
 =item Adds a colon on the end of headings.
 
 =item Changes SYNOPSIS head1 to USAGE.
+
+=item Optionally strips out headings.
 
 =back
 

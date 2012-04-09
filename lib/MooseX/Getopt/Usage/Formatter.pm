@@ -93,6 +93,12 @@ has colours => (
 
 has headings => (
     is      => "rw",
+    isa     => "Bool",
+    default => 1,
+);
+
+has groups => (
+    is      => "rw",
     isa     => "Undef|Bool",
     default => undef,
 );
@@ -198,7 +204,9 @@ sub usage {
         sections      => $self->usage_sections,
         options_style => 'text',
     );
-    my $parser = MooseX::Getopt::Usage::Pod::Text->new();
+    my $parser = MooseX::Getopt::Usage::Pod::Text->new(
+        headings => $self->headings
+    );
     my $out;
     $parser->output_string(\$out);
     $parser->parse_string_document($pod);
@@ -308,7 +316,6 @@ sub _options_text {
 
     my $gclass    = $self->getopt_class;
     my $colours   = $self->colours;
-    my $headings  = $self->headings;
     my $attr_sort = $self->attr_sort;
 
     my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
@@ -325,16 +332,17 @@ sub _options_text {
         }
     }
 
-    $headings  = @req_attrs ? 1 : 0 if not defined $headings;
-    my $indent = $headings ? 4 : 0;
+    my $groups  = $self->groups;
+    $groups  = @req_attrs ? 1 : 0 if not defined $groups;
+    my $indent = $groups ? 4 : 0;
 
     my $out = " ";
     $out .= colored($colours->{heading}, "Required:")."\n"
-        if $headings && @req_attrs;
+        if $groups && @req_attrs;
     $out .= $self->_attr_str($_, max_len => $max_len, indent => $indent )."\n"
         foreach @req_attrs;
     $out .= colored($colours->{heading}, "Optional:")."\n"
-        if $headings && @opt_attrs;
+        if $groups && @opt_attrs;
     $out .= $self->_attr_str($_, max_len => $max_len, indent => $indent )."\n"
         foreach @opt_attrs;
     $out =~ s{\n}{\n }gsm; # Make into pod preformat para
