@@ -235,13 +235,23 @@ sub _options_text {
 
 sub manpage {
     my $self   = shift;
-    my $gclass = $self->getopt_class;
 
     $self->_set_color_handling('never');
 
-    my $pod = podselect_text(
-        { -sections => $self->man_sections },
-        $self->pod_file );
+    my $pod = $self->_get_pod( sections => $self->man_sections );
+
+    open my $fh, "<", \$pod or die;
+    pod2usage( -verbose => 2, -input => $fh );
+}
+
+# Get the pod for the target class. Fills in missing sections.
+sub _get_pod {
+    my $self = shift;
+    my %args = @_;
+    my $sections = $args{sections} || [];
+    my $gclass   = $self->getopt_class;
+
+    my $pod = podselect_text( { -sections => $sections }, $self->pod_file );
 
     # XXX Some dirty pod regexp hacking. Needs moving to Pod::Parser.
     # Insert SYNOPSIS if not there. After NAME or top of pod.
@@ -254,6 +264,7 @@ sub manpage {
             $pod = "$synopsis\n$pod";
         }
     }
+
     # Insert OPTIONS if not there. After DESCRIPTION or SYNOPSIS or end of pod.
     unless ($pod =~ m/^=head1\s+OPTIONS\s*$/ms) {
         my $newpod = "\n=head1 OPTIONS\n\n";
@@ -268,13 +279,6 @@ sub manpage {
         }
     }
 
-    # Process the SYNOPSIS
-    $pod =~ s/
-            (^=head1\s+SYNOPSIS\s*\n)  # The header $1
-            (.*?)                      # Content $2
-            (^=|\z)                    # Next section or eof $3
-        /$1.$self->_parse_format($2).$3/mesx;
-
     # Add options list to OPTIONS
     #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
     my $options_pod = "";
@@ -288,8 +292,14 @@ sub manpage {
     $options_pod .= "=back\n\n";
     $pod =~ s/(^=head1\s+OPTIONS\s*\n.*?)(^=|\z)/$1\n$options_pod$2/ms;
 
-    open my $fh, "<", \$pod or die;
-    pod2usage( -verbose => 2, -input => $fh );
+    # Process the SYNOPSIS
+    $pod =~ s/
+            (^=head1\s+SYNOPSIS\s*\n)  # The header $1
+            (.*?)                      # Content $2
+            (^=|\z)                    # Next section or eof $3
+        /$1.$self->_parse_format($2).$3/mesx;
+
+    return $pod;
 }
 
 sub _parse_format {
