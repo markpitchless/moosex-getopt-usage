@@ -30,7 +30,15 @@ foreach my $cmd (@cmds) {
         my $self = shift;
         $self->cmd_line_ok($cmd);
     };
-    __PACKAGE__->add_testinfo($cmd, test => 8);
+    __PACKAGE__->add_testinfo($cmd, test => 4);
+}
+
+sub capture_ok {
+    my ($cmd, $stdout_ok, $stderr_ok, $testmsg) = @_;
+    my $msg = $testmsg ? " - $testmsg" : "";
+    my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
+    eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT$msg";
+    eq_or_diff $stderr, $stderr_ok, "$cmd STDERR$msg";
 }
 
 sub cmd_line_ok {
@@ -40,25 +48,23 @@ sub cmd_line_ok {
     my $ok_file = "$Bin/bin.ok/$cmd.usage.ok";
     if (-f $ok_file) {
         my $stdout_ok = slurp($ok_file);
-        my $stderr_ok = "";
-        foreach my $flag (qw/-? --help --usage/) {
-            my $cmd = "$cmd $flag";
-            my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
-            eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT";
-            eq_or_diff $stderr, $stderr_ok, "$cmd STDERR";
-        }
+        capture_ok( "$cmd --usage", $stdout_ok, "" );
     }
     
     $ok_file = "$Bin/bin.ok/$cmd.man.ok";
     if (-f $ok_file) {
         my $stdout_ok = slurp($ok_file);
-        my $stderr_ok = "";
-        foreach my $flag (qw/--man/) {
-            my $cmd = "$cmd $flag";
-            my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
-            eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT";
-            eq_or_diff $stderr, $stderr_ok, "$cmd STDERR";
-        }
+        capture_ok( "$cmd --man", $stdout_ok, "" );
+    }
+}
+
+# Make sure -? --help and --usage do the same thing
+sub help_flags : Test(6) {
+    my $self = shift;
+
+    my $stdout_ok = slurp("$Bin/bin.ok/basic.usage.ok");
+    foreach my $flag (qw/-? --help --usage/) {
+        capture_ok( "basic $flag", $stdout_ok, "" );
     }
 }
 
