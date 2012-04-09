@@ -106,9 +106,10 @@ has format => (
 sub _build_format {
     my $self = shift;
     my $pod_file = $self->pod_file;
+    my $sections = $self->format_sections;
     my $selected = "";
     if ( $pod_file ) {
-        $selected = podselect_text { -sections => ["SYNOPSIS"] }, $pod_file;
+        $selected = podselect_text { -sections => $sections }, $pod_file;
         $selected =~ s{^=head1.*?\n$}{}mg;
         $selected =~ s{^.*?\n}{};
         $selected =~ s{\n$}{};
@@ -126,6 +127,12 @@ has use_color => (
     is      => "rw",
     isa     => "ColorUsage",
     default => "auto",
+);
+
+has format_sections => (
+    is      => "rw",
+    isa     => "PodSelectList",
+    default => sub { ["SYNOPSIS"] },
 );
 
 has usage_sections => (
