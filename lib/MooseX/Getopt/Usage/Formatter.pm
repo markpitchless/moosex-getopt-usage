@@ -12,6 +12,7 @@ use Text::Wrap;
 use Pod::Usage;
 use Pod::Select;
 use Pod::Find qw(pod_where contains_pod);
+use Pod::Text;
 use File::Slurp qw(slurp);
 use File::Basename;
 use Module::Loaded;
@@ -127,7 +128,7 @@ sub _build_format {
     my $selected = $self->_podselect_for_usage($self->format_sections);
     return "    %c [OPTIONS]" unless $selected;
 
-    $selected =~ s{^.*?:\n\n?}{}mg;
+    $selected =~ s{^[A-Z].*?\n}{}mg;
     $selected =~ s{\n$}{};
     return $selected;
 }
@@ -139,11 +140,15 @@ sub _podselect_for_usage {
     my $selected = "";
     return $selected unless $pod_file;
 
-    $selected = podselect_text { -sections => $sections }, $pod_file;
-    $selected =~ s{^=head1 (.*?)\n$}{$1:}mg;
-    $selected =~ s{^=pod(.*?)\n\n?}{}mg;
-    #$selected =~ s{\n$}{};
-    return $selected;
+    $selected  = podselect_text { -sections => $sections }, $pod_file;
+    my $parser = Pod::Text->new();
+    my $out;
+    $parser->output_string(\$out);
+    $parser->parse_string_document($selected);
+    $out =~ s{^([A-Z].*?)\n}{$1:\n}mg;
+    # Try to do some lowercasing instead of all-caps in headings
+    $out =~ s{^([A-Z])(.*?\n)}{$1 . lc($2)}gem;
+    return $out;
 }
 
 has attr_sort => (
