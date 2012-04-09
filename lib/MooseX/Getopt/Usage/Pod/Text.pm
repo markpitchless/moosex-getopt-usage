@@ -11,44 +11,25 @@ sub new {
     my %args  = @_;
     my $self  = $proto->SUPER::new(@_);
     return unless $self;
-    $self->{headings} = exists $args{headings} ? $args{headings} : 1;
+    $self->{headings}   = exists $args{headings} ? $args{headings} : 1;
     $self->{opt_indent} = 0 if !$self->{headings};
     return $self;
 }
 
 sub heading {
-    my $self = shift;
+    my ($self, $text, $indent, $marker) = @_;
     return unless $self->{headings};
-    return $self->SUPER::heading(@_);
+    # Try to do some lowercasing instead of all-caps in headings, and use
+    # a colon to end all headings.
+    $text =~ s{([A-Z])([A-Z]+)}{((length($2) > 2) ? $1 : lc($1)) . lc($2)}ge;
+    $text .= ":" unless $text =~ /:$/;
+    return $self->SUPER::heading($text, $indent, $marker);
 }
 
 sub cmd_head1 {
     my ($self, $attrs, $text) = @_;
     $text =~ s{SYNOPSIS}{USAGE};
-    $text = $self->_headings($text);
     $self->SUPER::cmd_head1($attrs, $text);
-}
-
-sub cmd_head2 {
-    my ($self, $attrs, $text) = @_;
-    $text = $self->_headings($text);
-    $self->SUPER::cmd_head2($attrs, $text);
-}
-
-sub cmd_head3 {
-    my ($self, $attrs, $text) = @_;
-    $text = $self->_headings($text);
-    $self->SUPER::cmd_head3($attrs, $text);
-}
-
-sub _headings {
-    my $self = shift;
-    my $text = shift;
-    # Try to do some lowercasing instead of all-caps in headings, and use
-    # a colon to end all headings.
-    $text =~ s{([A-Z])([A-Z]+)}{((length($2) > 2) ? $1 : lc($1)) . lc($2)}ge;
-    $text .= ":" unless $text =~ /:$/;
-    return $text;
 }
 
 1;
