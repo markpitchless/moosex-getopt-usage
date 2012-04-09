@@ -15,15 +15,15 @@ sub doomify {}
 
 =head1 NAME
 
-allpod - All pod sections allready there. 
+allpod - All pod sections all ready there. 
 
 =head1 SYNOPSIS
 
-    $ %c [OPTIONS] [ALIENS]
+ %c [OPTIONS] [ALIENS]
 
 =head1 OPTIONS
 
-Some extra options text.
+Some extra options text. Put above DESCRIPTION, should stay there.
 
 =head1 ATTRIBUTES
 

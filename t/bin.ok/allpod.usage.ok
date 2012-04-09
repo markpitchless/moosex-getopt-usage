@@ -1,7 +1,10 @@
 Usage:
-    $ allpod [OPTIONS] [ALIENS]
+     allpod [OPTIONS] [ALIENS]
 
 Options:
-    --help -? --usage - Bool. Display the usage message and exit
-    --man             - Bool. Display man page
-    --doom            - Int. 
+    Some extra options text. Put above DESCRIPTION, should stay there.
+
+     --help -? --usage - Bool. Display the usage message and exit
+     --man             - Bool. Display man page
+     --doom            - Int.
+

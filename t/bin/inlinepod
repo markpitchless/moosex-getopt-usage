@@ -15,7 +15,7 @@ inlinepod - Can still read pod when all in one file like this.
 
 =head1 SYNOPSIS
 
-    inlinepod$ %c [OPTIONS] [THINGS]
+ inlinepod$ %c [OPTIONS] [THINGS]
 
 =head1 OPTIONS
 

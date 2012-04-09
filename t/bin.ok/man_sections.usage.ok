@@ -1,6 +1,9 @@
 Usage:
-    man_sections [OPTIONS] [MANS]
+     man_sections [OPTIONS] [MANS]
 
 Options:
-    --help -? --usage - Bool. Display the usage message and exit
-    --man             - Bool. Display man page
+    Some extra options text.
+
+     --help -? --usage - Bool. Display the usage message and exit
+     --man             - Bool. Display man page
+

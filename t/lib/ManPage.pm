@@ -10,7 +10,7 @@ with 'MooseX::Getopt::Usage::Role::Man';
 
 =head1 NAME
 
-manpage - Using MooseX::Getopt::Usage and Pod::Usage
+ManPage - Using MooseX::Getopt::Usage with minimal pod for man page. 
 
 =head1 DESCRIPTION
 

@@ -114,7 +114,7 @@ sub _build_format {
         $selected =~ s{^.*?\n}{};
         $selected =~ s{\n$}{};
     }
-    return $selected ? $selected : "    %c [OPTIONS]";
+    return $selected ? $selected : "%c [OPTIONS]";
 }
 
 has attr_sort => (

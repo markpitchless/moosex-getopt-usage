@@ -1,8 +1,8 @@
 NAME
-    manpage - Using MooseX::Getopt::Usage and Pod::Usage
+    ManPage - Using MooseX::Getopt::Usage with minimal pod for man page.
 
 SYNOPSIS
-        manpage [OPTIONS]
+    manpage [OPTIONS]
 
 DESCRIPTION
     This program will read the given input file(s) and do something useful

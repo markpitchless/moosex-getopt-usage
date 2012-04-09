@@ -12,9 +12,9 @@ with 'MooseX::Getopt::Usage::Role::Man';
 
 podusage - Reading usage format from POD. 
 
-=head1 SYNOPSIS 
+=head1 SYNOPSIS
 
-    hello$ %c [OPTIONS] [FILE]
+ hello$ %c [OPTIONS] [FILE]
 
 =head1 OPTIONS
 
