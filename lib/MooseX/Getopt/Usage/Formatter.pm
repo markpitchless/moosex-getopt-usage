@@ -12,7 +12,7 @@ use Text::Wrap;
 use Pod::Usage;
 use Pod::Select;
 use Pod::Find qw(pod_where contains_pod);
-use Pod::Text;
+use MooseX::Getopt::Usage::Pod::Text;
 use File::Slurp qw(slurp);
 use File::Basename;
 use Module::Loaded;
@@ -191,7 +191,7 @@ sub usage {
         sections      => $self->usage_sections,
         options_style => 'text',
     );
-    my $parser = Pod::Text->new();
+    my $parser = MooseX::Getopt::Usage::Pod::Text->new();
     my $out;
     $parser->output_string(\$out);
     $parser->parse_string_document($pod);
@@ -318,7 +318,7 @@ sub _options_text {
         }
     }
 
-    $headings  = @req_attrs ? 1 : 0 if not defined $headings; 
+    $headings  = @req_attrs ? 1 : 0 if not defined $headings;
     my $indent = $headings ? 4 : 0;
 
     my $out = " ";
