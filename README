@@ -13,7 +13,8 @@ SYNOPSIS
     package My::App;
     use Moose;
 
-    with 'MooseX::Getopt::Usage';
+    with 'MooseX::Getopt::Usage',
+         'MooseX::Getopt::Usage::Role::Man';
 
     has verbose => ( is => 'ro', isa => 'Bool', default => 0,
         documentation => qq{Say lots about what we are doing} );
@@ -28,20 +29,30 @@ SYNOPSIS
     use My::App;
     my $app = My::App->new_with_options;
 
-Can now get help:
+Can now get help,
 
-    $ synopsis.pl --help
-    Usage:
-        synopsis.pl [OPTIONS]
-    Options:
-        --help -? --usage - Bool. Display the usage message and exit
-        --verbose         - Bool. Say lots about what we are doing
-        --gumption        - Int. Default=23. How much gumption to apply
+ $ synopsis.pl -?
+ Usage:
+     synopsis.pl [OPTIONS]
+ 
+ Options:
+      --man             - Bool. Display man page
+      --help -? --usage - Bool. Display the usage message and exit
+      --verbose         - Bool. Say lots about what we are doing
+      --gumption        - Int. Default=23. How much gumption to apply
+
+as well as man page:
+
+ $synopsis.pl --man
 
 
 INSTALLATION
 
-To install this module, run the following commands:
+To install from CPAN
+
+ sudo cpan MooseX::Getopt::Usage
+
+To install from the src, run the following commands:
 
 	perl Build.PL
 	./Build
@@ -64,6 +75,11 @@ You can find documentation for this module with the perldoc command.
 The source code and other information is hosted on github:
 
     http://github.com/markpitchless/moosex-getopt-usage
+
+You can browse documentation on CPAN:
+
+    https://metacpan.org/module/MooseX::Getopt::Usage
+    http://search.cpan.org/~pitchless/MooseX-Getopt-Usage/lib/MooseX/Getopt/Usage.pm
 
 
 LICENSE AND COPYRIGHT
