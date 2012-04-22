@@ -34,11 +34,13 @@ sub basic : Test(2) {
     my $out_ok = <<EOSTDOUT;
 Usage:
     basic.t [OPTIONS]
+
 Options:
-    --help -? --usage - Bool. Display the usage message and exit
-    --verbose         - Bool. Say lots about what we do
-    --greet           - Str. Default=World. Who to say hello to.
-    --language        - Str. Default=en. Language to greet in.
+     --help -? --usage - Bool. Display the usage message and exit
+     --verbose         - Bool. Say lots about what we do
+     --greet           - Str. Default=World. Who to say hello to.
+     --language        - Str. Default=en. Language to greet in.
+
 EOSTDOUT
     my $out = $testme->getopt_usage;
     eq_or_diff $out, $out_ok, "Basic->getopt_usage";

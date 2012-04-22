@@ -67,6 +67,20 @@ Does the following.
 
 =back
 
+=head1 METHODS
+
+=head2 new
+
+Override constructor to add our own C<headings> and C<opt_indent> options.
+
+=head2 heading
+
+Lower casing and colon. Strip headings.
+
+=head2 cmd_head1
+
+Change SYNOPSIS to USAGE.
+
 =head1 SEE ALSO
 
 L<MooseX::Getopt::Usage>, L<MooseX::Getopt::Usage::Formatter>, L<perl>.
