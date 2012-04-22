@@ -31,6 +31,8 @@ MooseX::Getopt::Usage::Role::Man - Add man page (generated from POD) option.
 
 =head1 DESCRIPTION
 
+See L<MooseX::Getopt::Usage> for details.
+
 =head1 ATTRIBUTES
 
 =head2 man

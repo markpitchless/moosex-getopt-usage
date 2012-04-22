@@ -83,7 +83,7 @@ __END__
 
 =head1 NAME
 
-MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message generated from attribute meta.
+MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message and man page generated from attribute meta and POD.
 
 =head1 VERSION
 
@@ -134,16 +134,29 @@ and trap errors with usage.
 
 =head1 DESCRIPTION
 
-Perl Moose Role that extends L<MooseX::Getopt> to provide usage printing
-that inspects your classes meta information to build a (coloured) usage
-message including that meta information.
+Perl Moose Role that extends L<MooseX::Getopt> to provide usage printing and
+man page generation that inspects your classes meta information to build a
+(coloured) usage message including that meta information.
 
-If stdout is a tty usage message is colourised. Setting the env var
+If STDOUT is a tty usage message is colourised. Setting the env var
 ANSI_COLORS_DISABLED will disable colour even on a tty.
 
 Errors in command line option parsing will be displayed along with the usage,
 causing the program to exit with a non-zero status code when new_with_options
 is used.
+
+The usage message can be extended and controlled by including sections selected
+from the modules POD, with the default to automatically generate SYNOPSIS and
+OPTIONS sections.
+
+By also using the L<MooseX::Getopt::Usage::Role::Man> role a --man option is
+added to your class that will display the man page generated from your modules
+POD documentation. This POD will include the generated SYNOPSIS and OPTIONS
+sections if they are selected.
+
+This is all much inspired (and partly implemented) by the excellent
+L<Pod::Usage> module, but with added Moose meta goodness.
+
 
 =head1 ATTRIBUTES
 
@@ -154,20 +167,36 @@ args.
 
 =head2 man
 
-The --man option on the command line. If true after class construction
-program will exit displaying the man generated from the POD.
+Added when using L<MooseX::Getopt::Usage::Role::Man>. The --man option on the
+command line. If true after class construction program will exit displaying the
+man generated from the POD.
 
 =head1 METHODS
 
+=head2 new_with_options( %params )
+
+The normal L<MooseX::Getopt> entry point, over ridden here to add our own usage
+handling. If help_flag (-?, --help or --usage) is given in the options will
+display the usage message and exit.
+
+If L<MooseX::Getopt::Usage::Role::Man> (or man method exists that returns true)
+exits displaying the man page.
+
+Traps errors from the command line processing, displaying them along with the
+usage message. Will also trap type constraint fails and missing required
+attribute errors from your classes constructor.
+
 =head2 getopt_usage( %args )
 
-Generate the usage message and return or output to stdout and exit. Without
-exit arg returns the usage string, with an exit arg prints the usage to stdout
-and exits with the given exit code.
+Generate the usage message and return or output to stdout and exit. Used by
+new_with_options. Without exit arg returns the usage string, with an exit arg
+prints the usage to stdout and exits with the given exit code.
 
  print $self->getopt_usage if $self->help_flag;
 
  $self->getopt_usage( exit => 10, err => "Their all dead, Dave" );
+
+ $self->getopt_usage( man => 1 );
 
 Options are printed required first, then optional.  These two sections get a
 heading unless C<headings> arg or config is false.
@@ -184,6 +213,10 @@ that exit code after displaying usage to STDOUT.
 =item err | error
 
 Error message string to display before the usage. Will get the error highlight.
+
+=item man
+
+Display the man page instead of the usage message.
 
 =back
 
@@ -209,14 +242,25 @@ L</getopt_usage_config> in your class. e.g. to use a more compact layout.
     );
  }
 
-Availiable config is:
+Available config is:
 
 =head2 format
 
-String to format the top of the usage message. %c is substituted for the
-command name. Use %% for a literal %. Default:
+String to format the usage/synopsis section of the usage message. %c is
+substituted for the command name. Use %% for a literal %.
 
-    format => "Usage:\n    %c [OPTIONS]",
+If not set it will check the POD for L</format_sections>, using the POD selected
+if it is found. That defaults to the SYNOPSIS section, so the easy way to add
+your own usage section is to add a SYNOPSIS to your POD.
+
+If no POD is found a default string of C<"%c [OPTIONS]"> is used.
+
+Note that when selecting POD the headings are removed.
+
+=head2 format_sections
+
+Pod sections to select for the usage format option. Default is SYNOPSIS.
+Value is an array ref of L<Pod::Select/SECTION SPECIFICATIONS> strings.
 
 =head2 attr_sort
 
@@ -231,10 +275,10 @@ L<Moose::Meta::Attribute>s. e.g. to sort by name alphabetically:
 
 =head2 headings
 
-Whether to add headings of 'Options:' and 'Required:' to the list of options.
-Default is true.
+Whether to add headings to the generated usage message. Headings will come from
+the sections selected. Default is true.
 
-=head2 colours | colors
+=head2 colors
 
 Hash ref mapping highlight names to colours, given as strings to pass to
 L<Term::ANSIColor>. Default looks like this:
@@ -247,6 +291,22 @@ L<Term::ANSIColor>. Default looks like this:
         default_value => ['cyan'],
         error         => ['red']
     }
+
+=head2 usage_sections
+
+When generating a usage message the POD sections to select. Default is SYNOPSIS
+and OPTIONS sections (which will be auto generated from meta if they don't
+exist).
+Value is an array ref of L<Pod::Select/SECTION SPECIFICATIONS> strings.
+
+Headings will be displayed, titled cased with a colon on the end. Use the
+L</headings> option to hide the headings. Order displayed will be the same as
+the POD.
+
+You can use this to expand the usage message. e.g. you might also want the
+DESCRIPTION and EXAMPLE from your POD in the usage message:
+
+ usage_sections => ['SYNOPSIS|USAGE|DESCRIPTION|EXAMPLES']
 
 =head2 man_sections
 
@@ -267,6 +327,13 @@ or maybe you only want the NAME and DESCRIPTION (along with the generated
 SYNOPSIS and OPTIONS):
 
  man_sections => ["NAME|DESCRIPTION"],
+
+=head2 use_color
+
+Whether to use color in the usage message. One of 'auto', 'never', 'always' or
+'env'. Auto will use color if the output is a tty, otherwise not. 'env' looks
+at the ANSI_COLORS_DISABLED environment variable (see L<Term::ANSIColor>). Note
+that the env is also read in auto mode.
 
 =head2 unexpand
 

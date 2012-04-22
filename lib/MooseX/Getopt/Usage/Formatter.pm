@@ -185,7 +185,7 @@ sub _set_color_handling {
         when ('never') {
             $ENV{ANSI_COLORS_DISABLED} = 1;
         }
-        # 'env' is done in the local line above
+        # 'env' is done in the env set line above
     }
 }
 
