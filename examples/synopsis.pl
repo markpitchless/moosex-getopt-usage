@@ -4,7 +4,8 @@
 package My::App;
 use Moose;
 
-with 'MooseX::Getopt::Usage';
+with 'MooseX::Getopt::Usage',
+     'MooseX::Getopt::Usage::Role::Man';
 
 has verbose => ( is => 'ro', isa => 'Bool', default => 0,
     documentation => qq{Say lots about what we are doing} );

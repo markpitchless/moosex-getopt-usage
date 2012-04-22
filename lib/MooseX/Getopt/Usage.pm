@@ -95,7 +95,8 @@ Version 0.08
     package My::App;
     use Moose;
 
-    with 'MooseX::Getopt::Usage';
+    with 'MooseX::Getopt::Usage',
+         'MooseX::Getopt::Usage::Role::Man';
 
     has verbose => ( is => 'ro', isa => 'Bool', default => 0,
         documentation => qq{Say lots about what we are doing} );
@@ -115,22 +116,31 @@ Can now get help,
  $ synopsis.pl -?
  Usage:
      synopsis.pl [OPTIONS]
+ 
  Options:
-     --help -? --usage - Bool. Display the usage message and exit
-     --verbose         - Bool. Say lots about what we are doing
-     --gumption        - Int. Default=23. How much gumption to apply
+      --man             - Bool. Display man page
+      --help -? --usage - Bool. Display the usage message and exit
+      --verbose         - Bool. Say lots about what we are doing
+      --gumption        - Int. Default=23. How much gumption to apply
 
-and trap errors with usage.
+
+trap errors with usage,
 
  $ synopsis.pl --elbowgrease --gumption=Lots
  Unknown option: elbowgrease
  Value "Lots" invalid for option gumption (number expected)
  Usage:
      synopsis.pl [OPTIONS]
+ 
  Options:
-     --help -? --usage - Bool. Display the usage message and exit
-     --verbose         - Bool. Say lots about what we are doing
-     --gumption        - Int. Default=23. How much gumption to apply
+      --man             - Bool. Display man page
+      --help -? --usage - Bool. Display the usage message and exit
+      --verbose         - Bool. Say lots about what we are doing
+      --gumption        - Int. Default=23. How much gumption to apply
+ 
+and get a man page:
+
+ $ synopsis.pl --man
 
 =head1 DESCRIPTION
 
