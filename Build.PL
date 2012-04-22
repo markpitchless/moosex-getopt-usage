@@ -29,7 +29,7 @@ my $builder = Module::Build->new(
         'Capture::Tiny'     => 0.08,
     },
     add_to_cleanup     => [ 'MooseX-Getopt-Usage-*' ],
-    create_makefile_pl => 'traditional',
+    create_makefile_pl => 'small',
 );
 
 $builder->create_build_script();
