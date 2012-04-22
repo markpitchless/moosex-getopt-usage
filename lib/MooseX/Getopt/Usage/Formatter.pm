@@ -13,7 +13,6 @@ use Pod::Usage;
 use Pod::Select;
 use Pod::Find qw(pod_where contains_pod);
 use MooseX::Getopt::Usage::Pod::Text;
-use File::Slurp qw(slurp);
 use File::Basename;
 use Module::Loaded;
 use FindBin;

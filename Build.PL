@@ -16,6 +16,10 @@ my $builder = Module::Build->new(
         'Text::Wrap'      => 0,
         'File::Basename'  => 0,
         'Pod::Usage'      => 1.36,
+        'Pod::Text'       => 0,
+        'Module::Loaded'  => 0.06,
+        'Moose::Util::TypeConstraints' => 0,
+        'FindBin'         => 0,
     },
     build_requires => {
         'File::Slurp'       => 0,
@@ -23,7 +27,6 @@ my $builder = Module::Build->new(
         'Test::More'        => 0,
         'Test::Differences' => 0.5,
         'Capture::Tiny'     => 0.08,
-        'FindBin'           => 0,
     },
     add_to_cleanup     => [ 'MooseX-Getopt-Usage-*' ],
     create_makefile_pl => 'traditional',
