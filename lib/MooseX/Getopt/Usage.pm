@@ -373,7 +373,58 @@ appended to it, allowing you to add some extra documentation above the options.
 All section selecting options are applied after POD generation so can be used
 to hide as well as include generated sections.
 
-=head1 EXAMPLE
+=head1 EXAMPLES
+
+=head2 Expanding the usage message. 
+
+This adds the DESCRIPTION from the POD to the usage and changes the usage
+message to show it takes files.
+
+Put this is a file called descusage.pl and make it executable.
+
+ #!/usr/bin/perl
+ package Foo;
+ 
+ use Moose;
+ with 'MooseX::Getopt::Usage';
+ with 'MooseX::Getopt::Usage::Role::Man';
+ 
+ sub getopt_usage_config {
+     return ( usage_sections => ["SYNOPSIS|OPTIONS|DESCRIPTION"] );
+ }
+ 
+ =pod
+ 
+ =head1 SYNOPSIS
+ 
+  %c [OPTIONS] FILES 
+ 
+ =head1 DESCRIPTION
+ 
+ Does amazing things with FILES.
+ 
+ =cut
+ 
+ package main;
+ Foo->new_with_options;
+
+Then call to get usage:
+
+ $ descusage.pl -h
+ Usage:
+      descusage.pl [OPTIONS] FILES
+ 
+ Description:
+     Does amazing things with FILES.
+ 
+ Options:
+      --help -? --usage - Bool. Display the usage message and exit
+      --man             - Bool. Display man page
+
+Not that the OPTIONS section gets automatically generated for us but we still
+need to select it in the usage_sections option if we want to see it.
+
+=head2 Adding Options
 
 Put this is a file called hello.pl and make it executable.
 
@@ -383,6 +434,7 @@ Put this is a file called hello.pl and make it executable.
  use Moose;
 
  with 'MooseX::Getopt::Usage';
+ with 'MooseX::Getopt::Usage::Role::Man';
 
  has verbose => ( is => 'ro', isa => 'Bool',
      documentation => qq{Say lots about what we do} );
@@ -412,12 +464,15 @@ Which will look a bit like this, only in colour.
 
  Usage:
      hello.pl [OPTIONS]
- Required:
-     --times           - Int. How many times to say hello
+ 
  Options:
-     --help -? --usage - Bool. Display the usage message and exit
-     --verbose         - Bool. Say lots about what we do
-     --greet           - Str. Default=World. Who to say hello to.
+      Required:
+          --times           - Int. How many times to say hello
+      Optional:
+          --help -? --usage - Bool. Display the usage message and exit
+          --verbose         - Bool. Say lots about what we do
+          --greet           - Str. Default=World. Who to say hello to.
+
 
 =head1 SEE ALSO
 
