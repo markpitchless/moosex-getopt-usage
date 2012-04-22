@@ -7,6 +7,9 @@ my $builder = Module::Build->new(
     license             => 'perl',
     dist_author         => q{Mark Pitchless <markpitchless@gmail.com>},
     dist_version_from   => 'lib/MooseX/Getopt/Usage.pm',
+    configure_requires => {
+        'Module::Build' => 0.4
+    },
     requires => {
         'Moose'           => 1.23,
         'MooseX::Getopt'  => 0,

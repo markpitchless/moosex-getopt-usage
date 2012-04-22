@@ -11,6 +11,7 @@ lib/MooseX/Getopt/Usage/Role/Man.pm
 Makefile.PL
 MANIFEST
 META.yml
+META.json
 README
 t/00-load.t
 t/basic.t

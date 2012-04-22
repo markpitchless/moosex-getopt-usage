@@ -2,7 +2,7 @@ package MooseX::Getopt::Usage::Pod::Text;
 
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.09';
 
 use base qw(Pod::Text);
 

@@ -1,5 +1,13 @@
 Revision history for MooseX-Getopt-Usage
 
+0.09    22nd Apr 2012
+
+    * Integrates POD::Usage
+    * Select extra POD to go into usage.
+    * --man page option.
+    * Big re-factor of back end into separate classes.
+
+
 0.08    25th March 2012
 
     * Fix deps for test suite as well.
