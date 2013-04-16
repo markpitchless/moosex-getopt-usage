@@ -4,6 +4,7 @@ use Modern::Perl;
 use Moose;
 
 with 'MooseX::Getopt::Usage';
+with 'MooseX::Getopt::Usage::Role::Man';
 
 has verbose => ( is => 'ro', isa => 'Bool',
     documentation => qq{Say lots about what we do} );

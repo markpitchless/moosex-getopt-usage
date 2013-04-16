@@ -1,5 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
+    * Fix: handling of man when required options. Thanks to Wayne Marquette.
+    * Bin test skips for missing ok files.
+
 0.09    22nd Apr 2012
 
     * Integrates POD::Usage

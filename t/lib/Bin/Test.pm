@@ -46,13 +46,17 @@ sub cmd_line_ok {
     my $cmd  = shift;
 
     my $ok_file = "$Bin/bin.ok/$cmd.usage.ok";
-    if (-f $ok_file) {
+    SKIP: {
+        skip "No $ok_file to test with", 2 unless -f $ok_file;
+
         my $stdout_ok = slurp($ok_file);
         capture_ok( "$cmd --usage", $stdout_ok, "" );
     }
     
     $ok_file = "$Bin/bin.ok/$cmd.man.ok";
-    if (-f $ok_file) {
+    SKIP: {
+        skip "No $ok_file to test with", 2 unless -f $ok_file;
+
         my $stdout_ok = slurp($ok_file);
         capture_ok( "$cmd --man", $stdout_ok, "" );
     }
