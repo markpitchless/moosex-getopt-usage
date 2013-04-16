@@ -45,23 +45,21 @@ sub cmd_line_ok {
     my $self = shift;
     my $cmd  = shift;
 
-    my $tests = 0;
-
     my $ok_file = "$Bin/bin.ok/$cmd.usage.ok";
-    if (-f $ok_file) {
+    SKIP: {
+        skip "No $ok_file to test with", 2 unless -f $ok_file;
+
         my $stdout_ok = slurp($ok_file);
         capture_ok( "$cmd --usage", $stdout_ok, "" );
-        $tests++;
     }
     
     $ok_file = "$Bin/bin.ok/$cmd.man.ok";
-    if (-f $ok_file) {
+    SKIP: {
+        skip "No $ok_file to test with", 2 unless -f $ok_file;
+
         my $stdout_ok = slurp($ok_file);
         capture_ok( "$cmd --man", $stdout_ok, "" );
-        $tests++;
     }
-
-    die "No ok files found, nothing tested" unless $tests;
 }
 
 # Make sure -? --help and --usage do the same thing
