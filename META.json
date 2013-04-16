@@ -4,7 +4,7 @@
       "Mark Pitchless <markpitchless@gmail.com>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4, CPAN::Meta::Converter version 2.112150",
+   "generated_by" : "Module::Build version 0.4004, CPAN::Meta::Converter version 2.112621",
    "license" : [
       "perl_5"
    ],
@@ -48,19 +48,19 @@
    "provides" : {
       "MooseX::Getopt::Usage" : {
          "file" : "lib/MooseX/Getopt/Usage.pm",
-         "version" : "0.09"
+         "version" : "0.10"
       },
       "MooseX::Getopt::Usage::Formatter" : {
          "file" : "lib/MooseX/Getopt/Usage/Formatter.pm",
-         "version" : "0.09"
+         "version" : "0.10"
       },
       "MooseX::Getopt::Usage::Pod::Text" : {
          "file" : "lib/MooseX/Getopt/Usage/Pod/Text.pm",
-         "version" : "0.09"
+         "version" : "0.10"
       },
       "MooseX::Getopt::Usage::Role::Man" : {
          "file" : "lib/MooseX/Getopt/Usage/Role/Man.pm",
-         "version" : "0.09"
+         "version" : "0.10"
       }
    },
    "release_status" : "stable",
@@ -69,5 +69,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.09"
+   "version" : "0.10"
 }
