@@ -2,7 +2,7 @@
 package MooseX::Getopt::Usage;
 
 use 5.010;
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use Moose::Role;
 use Try::Tiny;

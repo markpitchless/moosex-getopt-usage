@@ -1,7 +1,7 @@
 package MooseX::Getopt::Usage::Formatter;
 
 use 5.010;
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use Moose;
 #use MooseX::StrictConstructor;
