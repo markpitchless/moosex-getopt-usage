@@ -10,8 +10,8 @@ lib/MooseX/Getopt/Usage/Pod/Text.pm
 lib/MooseX/Getopt/Usage/Role/Man.pm
 Makefile.PL
 MANIFEST
-META.yml
 META.json
+META.yml
 README
 t/00-load.t
 t/basic.t
@@ -31,6 +31,8 @@ t/bin.ok/manpage.man.ok
 t/bin.ok/manpage.usage.ok
 t/bin.ok/podusage.man.ok
 t/bin.ok/podusage.usage.ok
+t/bin.ok/required.man.ok
+t/bin.ok/required.usage.ok
 t/bin.ok/usage_sections.man.ok
 t/bin.ok/usage_sections.usage.ok
 t/bin.t
@@ -42,6 +44,7 @@ t/bin/inlinepod
 t/bin/man_sections
 t/bin/manpage
 t/bin/podusage
+t/bin/required
 t/bin/usage_sections
 t/lib/Basic.pm
 t/lib/Basic/Test.pm
@@ -53,4 +56,3 @@ t/manifest.t
 t/moosex-getopt-usage-formatter.t
 t/pod-coverage.t
 t/pod.t
-META.json
