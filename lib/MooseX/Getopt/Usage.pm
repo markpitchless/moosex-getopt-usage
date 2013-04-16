@@ -104,7 +104,7 @@ MooseX::Getopt::Usage - Extend MooseX::Getopt with usage message and man page ge
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =head1 SYNOPSIS
 
