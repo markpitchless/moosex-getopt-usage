@@ -386,8 +386,12 @@ sub _attr_str {
     my $indent  = $args{indent} || 0;
     my $colours = $self->colours;
 
-    my ($w) = GetTerminalSize;
-    local $Text::Wrap::columns = $w -1 || 72;
+    my $w = 72;
+    if (-t STDOUT) {
+        my ($tw) = GetTerminalSize();
+        $w = $tw -1 if defined $tw;
+    }
+    local $Text::Wrap::columns  = $w;
     local $Text::Wrap::unexpand = $self->unexpand;
     local $Text::Wrap::tabstop  = $self->tabstop;
 
