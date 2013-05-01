@@ -1,5 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
+    * Doesn't assume a terminal. Uses width 72 when no terminal.
+    * Documentation updates.
+
 0.10    16th Apr 2013
 
     * Fix: handling of man when required options. Thanks to Wayne Marquette.
