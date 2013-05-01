@@ -168,6 +168,9 @@ man page generation that inspects your classes meta information to build a
 If STDOUT is a tty usage message is colourised. Setting the env var
 ANSI_COLORS_DISABLED will disable colour even on a tty.
 
+The message is formatted to the width of the terminal when STDOUT is a tty, to
+a width of 72 characters otherwise.
+
 Errors in command line option parsing will be displayed along with the usage,
 causing the program to exit with a non-zero status code when new_with_options
 is used.
@@ -226,7 +229,9 @@ prints the usage to stdout and exits with the given exit code.
  $self->getopt_usage( man => 1 );
 
 Options are printed required first, then optional.  These two sections get a
-heading unless C<headings> arg or config is false.
+heading unless C<headings> arg or config is false. Note that required
+attributes of your class that have a default or builder will be considered
+optional options.
 
 %args can have any of the options from L</CONFIGURATION>, plus the following.
 
