@@ -48,19 +48,19 @@
    "provides" : {
       "MooseX::Getopt::Usage" : {
          "file" : "lib/MooseX/Getopt/Usage.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       },
       "MooseX::Getopt::Usage::Formatter" : {
          "file" : "lib/MooseX/Getopt/Usage/Formatter.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       },
       "MooseX::Getopt::Usage::Pod::Text" : {
          "file" : "lib/MooseX/Getopt/Usage/Pod/Text.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       },
       "MooseX::Getopt::Usage::Role::Man" : {
          "file" : "lib/MooseX/Getopt/Usage/Role/Man.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       }
    },
    "release_status" : "stable",
@@ -69,5 +69,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.10"
+   "version" : "0.11"
 }
