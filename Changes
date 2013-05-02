@@ -1,5 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
+0.12    Current Development
+
+
 0.11    2nd May 2013
 
     * Doesn't assume a terminal. Uses width 72 when no terminal.
