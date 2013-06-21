@@ -294,10 +294,10 @@ sub _get_pod {
 sub _options_pod {
     my $self   = shift;
     my $gclass = $self->getopt_class;
+    my $attr_sort = $self->attr_sort;
 
     my $options_pod = "";
-    #my @attrs = sort { $attr_sort->($a, $b) } $self->_compute_getopt_attrs;
-    my @attrs = $gclass->_compute_getopt_attrs;
+    my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
     $options_pod .= "=over 4\n\n";
     foreach my $attr (@attrs) {
         my $label = $self->_attr_label($attr);
