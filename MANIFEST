@@ -19,6 +19,8 @@ t/bin.ok/allpod.man.ok
 t/bin.ok/allpod.usage.ok
 t/bin.ok/basic.man.ok
 t/bin.ok/basic.usage.ok
+t/bin.ok/bool_defaults.man.ok
+t/bin.ok/bool_defaults.usage.ok
 t/bin.ok/headings.man.ok
 t/bin.ok/headings.usage.ok
 t/bin.ok/hide_options.man.ok
@@ -33,11 +35,14 @@ t/bin.ok/podusage.man.ok
 t/bin.ok/podusage.usage.ok
 t/bin.ok/required.man.ok
 t/bin.ok/required.usage.ok
+t/bin.ok/sorted.man.ok
+t/bin.ok/sorted.usage.ok
 t/bin.ok/usage_sections.man.ok
 t/bin.ok/usage_sections.usage.ok
 t/bin.t
 t/bin/allpod
 t/bin/basic
+t/bin/bool_defaults
 t/bin/headings
 t/bin/hide_options
 t/bin/inlinepod
@@ -45,6 +50,7 @@ t/bin/man_sections
 t/bin/manpage
 t/bin/podusage
 t/bin/required
+t/bin/sorted
 t/bin/usage_sections
 t/lib/Basic.pm
 t/lib/Basic/Test.pm
