@@ -402,11 +402,11 @@ sub _attr_str {
 
     my $docs  = "";
     my $pad   = $max_len - length($label);
-    my $def   = $attr->has_default ? $attr->default : "";
+    my $def   = $attr->has_default ? $attr->default : undef;
     (my $type = $attr->type_constraint) =~ s/(\w+::)*//g;
     $docs .= colored($colours->{type}, "$type. ") if $type;
     $docs .= colored($colours->{default_value}, "Default=$def").". "
-        if $def && ! ref $def;
+        if defined $def && ! ref $def;
     $docs  .= $attr->documentation || "";
 
     my $col1 = (" " x $indent).$label;
