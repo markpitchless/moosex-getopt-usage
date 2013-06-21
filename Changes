@@ -1,6 +1,9 @@
 Revision history for MooseX-Getopt-Usage
 
-0.12   21st June 2013
+0.13    Current Development
+
+
+0.12    21st June 2013
 
     * BugFix: #6 - attr_sort wasn't working on the man page.
     * BugFix: #1 - Default not shown for Boolean types.
