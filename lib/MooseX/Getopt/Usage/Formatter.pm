@@ -290,14 +290,20 @@ sub _get_pod {
     return $out;
 }
 
-# Generate POD version of the options from the meta info.
-sub _options_pod {
+# Return list of class attributes that are options.
+sub _getopt_attrs {
     my $self   = shift;
     my $gclass = $self->getopt_class;
     my $attr_sort = $self->attr_sort;
+    return sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
+}
 
+# Generate POD version of the options from the meta info.
+sub _options_pod {
+    my $self   = shift;
+
+    my @attrs = $self->_getopt_attrs;
     my $options_pod = "";
-    my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
     $options_pod .= "=over 4\n\n";
     foreach my $attr (@attrs) {
         my $label = $self->_attr_label($attr);
@@ -312,12 +318,9 @@ sub _options_pod {
 sub _options_text {
     my $self = shift;
     my $args = { @_ };
+    my $colours = $self->colours;
 
-    my $gclass    = $self->getopt_class;
-    my $colours   = $self->colours;
-    my $attr_sort = $self->attr_sort;
-
-    my @attrs = sort { $attr_sort->($a, $b) } $gclass->_compute_getopt_attrs;
+    my @attrs = $self->_getopt_attrs;
     my $max_len = 0;
     my (@req_attrs, @opt_attrs);
     foreach (@attrs) {
