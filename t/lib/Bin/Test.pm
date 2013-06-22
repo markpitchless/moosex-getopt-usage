@@ -31,13 +31,15 @@ opendir(my $dh, $TBin) || die "Can't open $TBin: $!";
 my @cmds = grep { -f "$TBin/$_" && -x "$TBin/$_" } readdir($dh);
 closedir($dh);
 foreach my $cmd (@cmds) {
+    my $meth_name = $cmd;
+    $meth_name =~ s/\..*?$//g;
     no strict 'refs';
-    my $meth = __PACKAGE__ . "::$cmd";
+    my $meth = __PACKAGE__ . "::$meth_name";
     *{$meth} = sub {
         my $self = shift;
         $self->cmd_line_ok($cmd);
     };
-    __PACKAGE__->add_testinfo($cmd, test => 4);
+    __PACKAGE__->add_testinfo($meth_name, test => 4);
 }
 
 sub capture_ok {
@@ -51,8 +53,9 @@ sub capture_ok {
 sub cmd_line_ok {
     my $self = shift;
     my $cmd  = shift;
+    (my $name = $cmd) =~ s/\..*?$//g;
 
-    my $ok_file = "$Bin/bin.ok/$cmd.usage.ok";
+    my $ok_file = "$Bin/bin.ok/$name.usage.ok";
     SKIP: {
         skip "No $ok_file to test with", 2 unless -f $ok_file;
 
@@ -60,7 +63,7 @@ sub cmd_line_ok {
         capture_ok( "$cmd --usage", $stdout_ok, "" );
     }
     
-    $ok_file = "$Bin/bin.ok/$cmd.man.ok";
+    $ok_file = "$Bin/bin.ok/$name.man.ok";
     SKIP: {
         skip "No $ok_file to test with", 2 unless -f $ok_file;
 
