@@ -19,6 +19,13 @@ use File::Basename;
 use FindBin qw($Bin);
 our $TBin = "$Bin/bin";
 
+# Grab the perl exe we are running under as recommended here:
+# http://wiki.cpantesters.org/wiki/CPANAuthorNotes
+# We need to run the test scripts under this perl to get the right includes in
+# automated environmenst like cpan testers running perlbrew.
+use Config;
+our $PerlPath = $Config{perlpath};
+
 # Generate test methods for all the exes in TBin
 opendir(my $dh, $TBin) || die "Can't open $TBin: $!";
 my @cmds = grep { -f "$TBin/$_" && -x "$TBin/$_" } readdir($dh);
@@ -36,7 +43,7 @@ foreach my $cmd (@cmds) {
 sub capture_ok {
     my ($cmd, $stdout_ok, $stderr_ok, $testmsg) = @_;
     my $msg = $testmsg ? " - $testmsg" : "";
-    my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
+    my ($stdout, $stderr) = capture { system("$PerlPath $TBin/$cmd") };
     eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT$msg";
     eq_or_diff $stderr, $stderr_ok, "$cmd STDERR$msg";
 }
