@@ -12,12 +12,19 @@ use Test::Differences;
 use FindBin qw($Bin);
 our $TBin = "$Bin/bin";
 
+# Grab the perl exe we are running under as recommended here:
+# http://wiki.cpantesters.org/wiki/CPANAuthorNotes
+# We need to run the test scripts under this perl to get the right includes in
+# automated environmenst like cpan testers running perlbrew.
+use Config;
+our $PerlPath = $Config{perlpath};
+
 sub cmd_stdout_like {
     my $cmd  = shift;
     my $re   = shift;
     my $tname = shift || "$cmd; stdout like $re";
 
-    my ($stdout, $stderr) = capture { system("$TBin/$cmd") };
+    my ($stdout, $stderr) = capture { system("$PerlPath $TBin/$cmd") };
     like $stdout, $re, $tname;
 }
 
@@ -59,9 +66,9 @@ sub err_message : Test(1) {
 sub cmd_line_errors : Tests(2) {
     my $self = shift;
 
-    cmd_stdout_like 'basic --notanoption',
+    cmd_stdout_like 'basic.pl --notanoption',
         qr/^Unknown option: notanoption\nUsage/;
-    cmd_stdout_like 'basic --verbose=2',
+    cmd_stdout_like 'basic.pl --verbose=2',
         qr/^Option verbose does not take an argument\nUsage/;
 
     # TODO : Test all the error traps and test status code.
