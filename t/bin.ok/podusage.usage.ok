@@ -1,5 +1,5 @@
 Usage:
-     hello$ podusage [OPTIONS] [FILE]
+     hello$ podusage.pl [OPTIONS] [FILE]
 
 Options:
     Some extra options text.

@@ -2,7 +2,7 @@ NAME
     inlinepod - Can still read pod when all in one file like this.
 
 SYNOPSIS
-     inlinepod$ inlinepod [OPTIONS] [THINGS]
+     inlinepod$ inlinepod.pl [OPTIONS] [THINGS]
 
 OPTIONS
     Some extra options text.

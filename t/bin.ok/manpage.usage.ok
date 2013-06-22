@@ -1,5 +1,5 @@
 Usage:
-    manpage [OPTIONS]
+    manpage.pl [OPTIONS]
 
 Options:
      --help -? --usage - Bool. Display the usage message and exit

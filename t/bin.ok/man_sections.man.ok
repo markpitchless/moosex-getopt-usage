@@ -2,7 +2,7 @@ NAME
     man_sections - Test man_sections option.
 
 SYNOPSIS
-     man_sections [OPTIONS] [MANS]
+     man_sections.pl [OPTIONS] [MANS]
 
 OPTIONS
     Some extra options text.

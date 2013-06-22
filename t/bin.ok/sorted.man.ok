@@ -2,7 +2,7 @@ NAME
     Sorted - Custom sort function works.
 
 SYNOPSIS
-    sorted [OPTIONS]
+    sorted.pl [OPTIONS]
 
 DESCRIPTION
     Make sure custom sort func gets used.

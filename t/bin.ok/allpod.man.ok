@@ -2,7 +2,7 @@ NAME
     allpod - All pod sections all ready there.
 
 SYNOPSIS
-     allpod [OPTIONS] [ALIENS]
+     allpod.pl [OPTIONS] [ALIENS]
 
 OPTIONS
     Some extra options text. Put above DESCRIPTION, should stay there.

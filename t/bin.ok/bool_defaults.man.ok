@@ -1,5 +1,5 @@
 SYNOPSIS
-    bool_defaults [OPTIONS]
+    bool_defaults.pl [OPTIONS]
 
 DESCRIPTION
     Make sure Bool attr get their defaults shown if set.

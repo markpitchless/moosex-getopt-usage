@@ -2,7 +2,7 @@ NAME
     required - Test handling of required attr.
 
 SYNOPSIS
-    required [OPTIONS]
+    required.pl [OPTIONS]
 
 DESCRIPTION
     In particular this tests the handling of --help and --man when we have

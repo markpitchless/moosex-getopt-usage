@@ -1,5 +1,5 @@
 Usage:
-     allpod [OPTIONS] [ALIENS]
+     allpod.pl [OPTIONS] [ALIENS]
 
 Options:
     Some extra options text. Put above DESCRIPTION, should stay there.

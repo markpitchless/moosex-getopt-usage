@@ -2,7 +2,7 @@ NAME
     podusage - Reading usage format from POD.
 
 SYNOPSIS
-     hello$ podusage [OPTIONS] [FILE]
+     hello$ podusage.pl [OPTIONS] [FILE]
 
 OPTIONS
     Some extra options text.

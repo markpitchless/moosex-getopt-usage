@@ -1,6 +1,6 @@
 Unknown option: man
 Usage:
-    basic [OPTIONS]
+    basic.pl [OPTIONS]
 
 Options:
      --help -? --usage - Bool. Display the usage message and exit

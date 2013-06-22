@@ -78,7 +78,7 @@ sub help_flags : Test(6) {
 
     my $stdout_ok = slurp("$Bin/bin.ok/basic.usage.ok");
     foreach my $flag (qw/-? --help --usage/) {
-        capture_ok( "basic $flag", $stdout_ok, "" );
+        capture_ok( "basic.pl $flag", $stdout_ok, "" );
     }
 }
 

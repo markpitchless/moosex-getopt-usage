@@ -1,5 +1,5 @@
 Usage:
-     man_sections [OPTIONS] [MANS]
+     man_sections.pl [OPTIONS] [MANS]
 
 Options:
     Some extra options text.

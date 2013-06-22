@@ -2,7 +2,7 @@ NAME
     usage_sections - Test usage_sections option.
 
 SYNOPSIS
-     usage_sections [OPTIONS] [MANS]
+     usage_sections.pl [OPTIONS] [MANS]
 
 OPTIONS
     Should get options added under here:

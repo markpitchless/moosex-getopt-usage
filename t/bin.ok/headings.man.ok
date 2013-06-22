@@ -2,7 +2,7 @@ NAME
     headings - Test headings option.
 
 SYNOPSIS
-    headings [OPTIONS]
+    headings.pl [OPTIONS]
 
 OPTIONS
     --help -? --usage

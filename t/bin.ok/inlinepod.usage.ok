@@ -1,5 +1,5 @@
 Usage:
-     inlinepod$ inlinepod [OPTIONS] [THINGS]
+     inlinepod$ inlinepod.pl [OPTIONS] [THINGS]
 
 Options:
     Some extra options text.
