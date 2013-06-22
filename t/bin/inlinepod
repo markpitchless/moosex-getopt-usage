@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 package InlinePod;
 use strict;
 use warnings;
