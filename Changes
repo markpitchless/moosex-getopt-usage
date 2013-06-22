@@ -1,6 +1,10 @@
 Revision history for MooseX-Getopt-Usage
 
-0.13    Current Development
+0.12_01 22nd June 2013 (Development)
+
+    * Re-working of test suite to call exe using the perl that ran the test to
+      try and fix cpantesters failures.
+    * Rename test exes to *.pl for windows compat.
 
 
 0.12    21st June 2013
