@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 package BoolDefaults;
-use Modern::Perl;
 use Moose;
 
 with 'MooseX::Getopt::Usage';
