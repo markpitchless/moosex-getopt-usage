@@ -1,5 +1,6 @@
 Build.PL
 Changes
+contrib/update_bin_t
 examples/descusage.pl
 examples/hello-compact.pl
 examples/hello.pl
@@ -21,6 +22,8 @@ t/bin.ok/basic.man.ok
 t/bin.ok/basic.usage.ok
 t/bin.ok/bool_defaults.man.ok
 t/bin.ok/bool_defaults.usage.ok
+t/bin.ok/errors.man.ok
+t/bin.ok/errors.usage.ok
 t/bin.ok/headings.man.ok
 t/bin.ok/headings.usage.ok
 t/bin.ok/hide_options.man.ok
@@ -43,6 +46,7 @@ t/bin.t
 t/bin/allpod.pl
 t/bin/basic.pl
 t/bin/bool_defaults.pl
+t/bin/errors.pl
 t/bin/headings.pl
 t/bin/hide_options.pl
 t/bin/inlinepod.pl
