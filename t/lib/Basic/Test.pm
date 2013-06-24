@@ -63,13 +63,25 @@ sub err_message : Test(1) {
 }
 
 # Are we trapping command line errors properly. ie in new_with_options
-sub cmd_line_errors : Tests(2) {
+sub cmd_line_errors : Tests(5) {
     my $self = shift;
 
-    cmd_stdout_like 'basic.pl --notanoption',
+    cmd_stdout_like 'errors.pl --notanoption',
         qr/^Unknown option: notanoption\nUsage/;
-    cmd_stdout_like 'basic.pl --verbose=2',
+
+    cmd_stdout_like 'errors.pl --verbose=2',
         qr/^Option verbose does not take an argument\nUsage/;
+
+    cmd_stdout_like 'required.pl',
+        qr/^Required option missing: doom\nUsage/;
+
+    # This trips the getopt validation, not the moose type constraint
+    cmd_stdout_like 'errors.pl --doom=lots',
+        qr/^Value "lots" invalid for option doom \(number expected\)\nUsage/;
+
+    # This gets past getopt but trips a moose type constraint
+    cmd_stdout_like 'errors.pl --missile_launchers=fast',
+        qr/^Invalid 'missile_launchers' : value 'fast' is not one of on,off,auto\nUsage/;
 
     # TODO : Test all the error traps and test status code.
 }
