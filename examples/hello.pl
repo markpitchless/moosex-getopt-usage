@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 package Hello;
-use Modern::Perl;
+use 5.010;
 use Moose;
 
 with 'MooseX::Getopt::Usage';

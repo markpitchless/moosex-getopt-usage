@@ -452,7 +452,7 @@ Put this is a file called hello.pl and make it executable.
 
  #!/usr/bin/env perl
  package Hello;
- use Modern::Perl;
+ use 5.010;
  use Moose;
 
  with 'MooseX::Getopt::Usage';
