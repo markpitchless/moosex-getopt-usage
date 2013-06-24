@@ -1,5 +1,11 @@
 Revision history for MooseX-Getopt-Usage
 
+0.12_02 24th June 2013 (Development)
+
+    * Remove warnings about experimental features (given/when) on perl 5.18 and
+      above.
+    * Remove dep on Modern::Perl
+
 0.12_01 22nd June 2013 (Development)
 
     * Re-working of test suite to call exe using the perl that ran the test to
