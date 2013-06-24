@@ -172,20 +172,18 @@ sub _set_color_handling {
     my $mode = shift;
 
     $ENV{ANSI_COLORS_DISABLED} = defined $ENV{ANSI_COLORS_DISABLED} ? 1 : undef;
-    given ($mode) {
-        when ('auto') {
-            if ( not defined $ENV{ANSI_COLORS_DISABLED} ) {
-                $ENV{ANSI_COLORS_DISABLED} = -t STDOUT ? undef : 1;
-            }
+    if ($mode eq 'auto') {
+        if ( not defined $ENV{ANSI_COLORS_DISABLED} ) {
+            $ENV{ANSI_COLORS_DISABLED} = -t STDOUT ? undef : 1;
         }
-        when ('always') {
-            $ENV{ANSI_COLORS_DISABLED} = undef;
-        }
-        when ('never') {
-            $ENV{ANSI_COLORS_DISABLED} = 1;
-        }
-        # 'env' is done in the env set line above
     }
+    elsif ($mode eq 'always') {
+        $ENV{ANSI_COLORS_DISABLED} = undef;
+    }
+    elsif ($mode eq 'never') {
+        $ENV{ANSI_COLORS_DISABLED} = 1;
+    }
+    # 'env' is done in the env set line above
 }
 
 sub usage {
