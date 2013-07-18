@@ -255,7 +255,11 @@ Display the man page instead of the usage message.
 =head2 getopt_usage_config
 
 Return a hash (ie a list) of config to override the defaults. Default returns
-empty list. See L</CONFIGURATION> for details.
+empty list. See L</CONFIGURATION> for details of the option keys.
+
+Note that this method gets called as a class method, before the class is
+constructed. If you wish to change this method from a role you will need to use
+the around method modifier. See L</Sharing config>.
 
 =head1 CONFIGURATION
 
@@ -494,6 +498,46 @@ Which will look a bit like this, only in colour.
           --help -? --usage - Bool. Display the usage message and exit
           --verbose         - Bool. Say lots about what we do
           --greet           - Str. Default=World. Who to say hello to.
+
+=head2 Sharing config
+
+You may find that you want to have a common set of config (ie
+L</getopt_usage_config> return) shared by a number of command classes. You could
+do this with a common base class or as this is Moose do it with a role.
+
+First create the role class to hold the common config:
+
+    package CommonGetoptConfig;
+    use Moose::Role;
+
+    around getopt_usage_config => sub {
+        my $orig  = shift;
+        my $class = shift;
+        return (
+            attr_sort => sub { $_[0]->name cmp $_[1]->name },
+            format => "Usage: %c [OPTIONS]",
+            headings => 0,
+            $class->$orig(@_),
+        );
+    };
+
+    1;
+
+Then in you comand class consume that role:
+
+    #!/usr/bin/env perl
+    package Hello;
+    use Moose;
+   
+    with 'MooseX::Getopt::Usage';
+    with 'CommonGetoptConfig';
+   
+    #...
+
+Note that if the consuming class also impliments getopt_usage_config then
+the configs will be combined, with config from the class overriding that from
+the role. You can change this order by moving the C<< $class->$orig(@_), >> in
+the return in the role above.
 
 
 =head1 SEE ALSO
