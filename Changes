@@ -1,5 +1,7 @@
 Revision history for MooseX-Getopt-Usage
 
+    * Documentation on sharing getopt_usage_config.
+
 0.12_02 24th June 2013 (Development)
 
     * Remove warnings about experimental features (given/when) on perl 5.18 and
