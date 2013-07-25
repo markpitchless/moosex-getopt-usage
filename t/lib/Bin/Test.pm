@@ -44,10 +44,11 @@ foreach my $cmd (@cmds) {
 
 sub capture_ok {
     my ($cmd, $stdout_ok, $stderr_ok, $testmsg) = @_;
+    my ($script, @args) = @{$cmd};
     my $msg = $testmsg ? " - $testmsg" : "";
-    my ($stdout, $stderr) = capture { system("$PerlPath $TBin/$cmd") };
-    eq_or_diff $stdout, $stdout_ok, "$cmd STDOUT$msg";
-    eq_or_diff $stderr, $stderr_ok, "$cmd STDERR$msg";
+    my ($stdout, $stderr) = capture { system($PerlPath, "$TBin/$script", @args) };
+    eq_or_diff $stdout, $stdout_ok, "$script @args STDOUT$msg";
+    eq_or_diff $stderr, $stderr_ok, "$script @args STDERR$msg";
 }
 
 sub cmd_line_ok {
@@ -60,7 +61,7 @@ sub cmd_line_ok {
         skip "No $ok_file to test with", 2 unless -f $ok_file;
 
         my $stdout_ok = slurp($ok_file);
-        capture_ok( "$cmd --usage", $stdout_ok, "" );
+        capture_ok( [$cmd, "--usage"], $stdout_ok, "" );
     }
     
     $ok_file = "$Bin/bin.ok/$name.man.ok";
@@ -68,7 +69,7 @@ sub cmd_line_ok {
         skip "No $ok_file to test with", 2 unless -f $ok_file;
 
         my $stdout_ok = slurp($ok_file);
-        capture_ok( "$cmd --man", $stdout_ok, "" );
+        capture_ok( [$cmd, "--man"], $stdout_ok, "" );
     }
 }
 
@@ -78,7 +79,7 @@ sub help_flags : Test(6) {
 
     my $stdout_ok = slurp("$Bin/bin.ok/basic.usage.ok");
     foreach my $flag (qw/-? --help --usage/) {
-        capture_ok( "basic.pl $flag", $stdout_ok, "" );
+        capture_ok( ["basic.pl", $flag], $stdout_ok, "" );
     }
 }
 
