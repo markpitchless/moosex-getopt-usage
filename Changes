@@ -1,6 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
-    * Documentation on sharing getopt_usage_config.
+    * Fix for RT id 85348 (Tests fail on system using perl other than /usr/bin/perl)
+      Integrates patch from ilmari+cpan@ilmari.org.
+    * Documentation on sharing getopt_usage_config. Thanks to Wayne Marquette.
 
 0.12_02 24th June 2013 (Development)
 
