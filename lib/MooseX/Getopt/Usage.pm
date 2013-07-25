@@ -568,6 +568,13 @@ Mark Pitchless, C<< <markpitchless at gmail.com> >>
 
 =head1 ACKNOWLEDGEMENTS
 
+Wayne Marquette for bug finding and pushing the use cases.
+
+ilmari+cpan@ilmari.org for patching file based tests.
+
+Tomas Doran for discussions and ideas that lead to all the pod mangling
+goodness and the big refactor at version 0.09.
+
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2012 Mark Pitchless
