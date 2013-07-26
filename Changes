@@ -5,19 +5,9 @@ Revision history for MooseX-Getopt-Usage
     * Fix for RT id 85348 (Tests fail on system using perl other than /usr/bin/perl)
       Integrates patch from ilmari+cpan@ilmari.org.
     * Documentation on sharing getopt_usage_config. Thanks to Wayne Marquette.
-
-
-0.12_02 24th June 2013 (Development)
-
     * Remove warnings about experimental features (given/when) on perl 5.18 and
       above.
     * Remove dep on Modern::Perl
-
-
-0.12_01 22nd June 2013 (Development)
-
-    * Re-working of test suite to call exe using the perl that ran the test to
-      try and fix cpantesters failures.
     * Rename test exes to *.pl for windows compat.
 
 
