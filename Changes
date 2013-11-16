@@ -1,5 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
+    * Added %a, %o and %r to format section to include line of options in
+      usage.
+
 0.16    16th Nov 2013
 
     * Added auto_help and auto_man options to disable automatic display of usage.
