@@ -1,6 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
-    * auto_help and auto_man options to disable automatic display of usage.
+0.16    16th Nov 2013
+
+    * Added auto_help and auto_man options to disable automatic display of usage.
 
 0.14    25th July 2013
 
