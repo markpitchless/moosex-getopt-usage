@@ -51,6 +51,10 @@ around new_with_options => sub {
     my @params = @_;
     my $self;
 
+    my $conf = { $class->getopt_usage_config };
+    $conf->{auto_man} = 1 if not exists $conf->{auto_man};
+    $conf->{auto_help} = 1 if not exists $conf->{auto_help};
+
     try {
         # Get in early on the arg passing to look for help or man options.
         # This makes sure they still work even when required options are missing,
@@ -58,8 +62,10 @@ around new_with_options => sub {
         # See github issue #4
         my $pa = $class->process_argv(@params);
         my $cli_params = $pa->cli_params;
-        $class->getopt_usage( man => 1)   if $class->can('man') and $cli_params->{man};
-        $class->getopt_usage( exit => 0 ) if $cli_params->{help_flag};
+        $class->getopt_usage( man => 1)
+            if $conf->{auto_man} and $class->can('man') and $cli_params->{man};
+        $class->getopt_usage( exit => 0 )
+            if $conf->{auto_help} and $cli_params->{help_flag};
 
         # Construct the object in the same way as our super new_with_options
         $self = $class->new(
@@ -379,6 +385,17 @@ Set C<$Text::Wrap::unexpand>, see L<Text::Wrap/OVERRIDES>.
 
 Set C<$Text::Wrap::tabstop>, see L<Text::Wrap/OVERRIDES>.
 
+=head2 auto_man
+
+Defaults to true. Display usage when --help option is given. Set false to
+disable this, allowing you to do your own processing after new_with_options
+then probably call L<getopt_usage> yourself.
+
+=head2 auto_help
+
+Defaults to true. Display man page when --man option is given. Set false to
+disable this, allowing you to do your own processing after new_with_options
+then probably call C<< getopt_usage( man => 1,.. ) >> yourself.
 
 =head1 POD GENERATION
 
