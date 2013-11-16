@@ -1,5 +1,8 @@
 Revision history for MooseX-Getopt-Usage
 
+0.20    16th Nov 2013
+
+    * Add width formatting option.
     * Fix text wrapping bug.
 
 0.18    16th Nov 2013
