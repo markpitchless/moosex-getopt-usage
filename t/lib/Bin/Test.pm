@@ -28,7 +28,11 @@ our $PerlPath = $Config{perlpath};
 
 # Generate test methods for all the exes in TBin
 opendir(my $dh, $TBin) || die "Can't open $TBin: $!";
-my @cmds = grep { -f "$TBin/$_" && -x "$TBin/$_" } readdir($dh);
+my @cmds = grep {
+    /^[^\.].*\.pl$/   # Not hidden and pl extention
+    && -f "$TBin/$_"  # Normal file
+    && -x "$TBin/$_"  # Executable
+    } readdir($dh);
 closedir($dh);
 foreach my $cmd (@cmds) {
     my $meth_name = $cmd;
