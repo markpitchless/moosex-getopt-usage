@@ -1,5 +1,7 @@
 Revision history for MooseX-Getopt-Usage
 
+    * Fix text wrapping bug.
+
 0.18    16th Nov 2013
 
     * Added %a, %o and %r to format section to include line of options in
