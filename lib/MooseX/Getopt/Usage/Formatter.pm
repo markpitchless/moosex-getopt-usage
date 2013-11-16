@@ -357,12 +357,53 @@ sub _parse_format {
     my $colours = $self->colours;
 
     $fmt =~ s/%c/colored $colours->{command}, prog_name()/ieg;
+    $fmt =~ s/%a/$self->_format_opt_line('a')/ieg;
+    $fmt =~ s/%r/$self->_format_opt_line('r')/ieg;
+    $fmt =~ s/%o/$self->_format_opt_line('o')/ieg;
     $fmt =~ s/%%/%/g;
     # TODO - Be good to have a include that generates a list of the opts
     #        %r - required  %a - all  %o - options
     $fmt =~ s/^(.*?:\n)/colored $colours->{heading}, "$1"/egm;
     $self->_colourise(\$fmt);
     return $fmt;
+}
+
+sub _format_opt_line {
+    my $self = shift;
+    my $group = shift;
+
+    my @attrs;
+    if ( !$group || $group eq "a" ) {
+        @attrs = $self->_getopt_attrs;
+    }
+    elsif ( $group eq "r" ) {
+        @attrs = grep {
+            $_->is_required && !$_->has_default && !$_->has_builder
+        } $self->_getopt_attrs;
+    }
+    elsif ( $group eq "o" ) {
+        @attrs = grep {
+            !($_->is_required && !$_->has_default && !$_->has_builder)
+        } $self->_getopt_attrs;
+    }
+    else {
+        confess "Unknown grouping: $group";
+    }
+
+    my @out;
+    foreach my $attr (@attrs) {
+        my $opt = "";
+        my $label = $self->_attr_label($attr);
+        $opt .= "$label";
+        if ( not $attr->type_constraint->is_a_type_of("Bool") ) {
+            $opt .= "=".uc($attr->name)
+        }
+        if (!$attr->is_required || $attr->has_default || $attr->has_builder) {
+            $opt = "[$opt]";
+        }
+        push @out, $opt;
+    }
+    return join(" ", @out);;
 }
 
 # Return the full label, including aliases and dashes, for the passed attribute
@@ -421,7 +462,7 @@ sub _colourise {
     my $colours = $self->colours;
 
     my $str = ref $out ? $out : \$out;
-    $$str =~ s/((?:^|\s)--?[\w?]+)/colored $colours->{flag}, "$1"/ge;
+    $$str =~ s/(^|\s|\[)(--?[\w?]+)/"$1".colored $colours->{flag},"$2"/ge;
     return ref $out ? $out : $$str;
 }
 
