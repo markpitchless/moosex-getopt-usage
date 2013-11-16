@@ -26,6 +26,8 @@ t/bin.ok/bool_defaults.man.ok
 t/bin.ok/bool_defaults.usage.ok
 t/bin.ok/errors.man.ok
 t/bin.ok/errors.usage.ok
+t/bin.ok/format_opt_lists.man.ok
+t/bin.ok/format_opt_lists.usage.ok
 t/bin.ok/headings.man.ok
 t/bin.ok/headings.usage.ok
 t/bin.ok/hide_options.man.ok
@@ -52,6 +54,7 @@ t/bin/auto_help_man.pl
 t/bin/basic.pl
 t/bin/bool_defaults.pl
 t/bin/errors.pl
+t/bin/format_opt_lists.pl
 t/bin/headings.pl
 t/bin/hide_options.pl
 t/bin/inlinepod.pl
