@@ -18,6 +18,8 @@ t/00-load.t
 t/basic.t
 t/bin.ok/allpod.man.ok
 t/bin.ok/allpod.usage.ok
+t/bin.ok/auto_help_man.man.ok
+t/bin.ok/auto_help_man.usage.ok
 t/bin.ok/basic.man.ok
 t/bin.ok/basic.usage.ok
 t/bin.ok/bool_defaults.man.ok
@@ -38,12 +40,15 @@ t/bin.ok/podusage.man.ok
 t/bin.ok/podusage.usage.ok
 t/bin.ok/required.man.ok
 t/bin.ok/required.usage.ok
+t/bin.ok/simple.man.ok
+t/bin.ok/simple.usage.ok
 t/bin.ok/sorted.man.ok
 t/bin.ok/sorted.usage.ok
 t/bin.ok/usage_sections.man.ok
 t/bin.ok/usage_sections.usage.ok
 t/bin.t
 t/bin/allpod.pl
+t/bin/auto_help_man.pl
 t/bin/basic.pl
 t/bin/bool_defaults.pl
 t/bin/errors.pl
@@ -54,6 +59,7 @@ t/bin/man_sections.pl
 t/bin/manpage.pl
 t/bin/podusage.pl
 t/bin/required.pl
+t/bin/simple.pl
 t/bin/sorted.pl
 t/bin/usage_sections.pl
 t/lib/Basic.pm
