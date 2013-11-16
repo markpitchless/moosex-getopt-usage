@@ -122,6 +122,23 @@ sub _build_format {
     return $selected ? $selected : "%c [OPTIONS]";
 }
 
+has width => (
+    is      => "rw",
+    isa     => "Int",
+    lazy_build => 1,
+);
+
+sub _build_width {
+    my $self = shift;
+    my $w = 72;
+    if (-t STDOUT) {
+        my ($tw) = GetTerminalSize();
+        $w = $tw -1 if defined $tw;
+    }
+    return $w;
+}
+
+
 has attr_sort => (
     is      => "rw",
     isa     => "CodeRef",
@@ -202,6 +219,7 @@ sub usage {
         options_style => 'text',
     );
     my $parser = MooseX::Getopt::Usage::Pod::Text->new(
+        width    => $self->width,
         headings => $self->headings
     );
     my $out;
@@ -428,12 +446,7 @@ sub _attr_str {
     my $indent  = $args{indent} || 0;
     my $colours = $self->colours;
 
-    my $w = 72;
-    if (-t STDOUT) {
-        my ($tw) = GetTerminalSize();
-        $w = $tw -1 if defined $tw;
-    }
-    local $Text::Wrap::columns  = $w;
+    local $Text::Wrap::columns  = $self->width;
     local $Text::Wrap::unexpand = $self->unexpand;
     local $Text::Wrap::tabstop  = $self->tabstop;
 

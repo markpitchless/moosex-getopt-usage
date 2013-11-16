@@ -311,6 +311,12 @@ a format string of "%c %r %o" might produce:
 Pod sections to select for the usage format option. Default is SYNOPSIS.
 Value is an array ref of L<Pod::Select/SECTION SPECIFICATIONS> strings.
 
+=head2 width
+
+Width to wrap output text. Default tests for a terminal, using it's width-1 if
+found (so users get usage or man that fills the terminal but wraps nicely),
+defaulting to 72 otherwise.
+
 =head2 attr_sort
 
 Sub ref used to sort the attributes and hence the order they appear in the
