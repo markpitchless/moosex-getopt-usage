@@ -1,5 +1,7 @@
 Revision history for MooseX-Getopt-Usage
 
+    * auto_help and auto_man options to disable automatic display of usage.
+
 0.14    25th July 2013
 
     * Fix for RT id 85348 (Tests fail on system using perl other than /usr/bin/perl)
