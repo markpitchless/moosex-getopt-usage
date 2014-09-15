@@ -605,6 +605,8 @@ ilmari+cpan@ilmari.org for patching file based tests.
 Tomas Doran for discussions and ideas that lead to all the pod mangling
 goodness and the big refactor at version 0.09.
 
+skazakoff for Moose bug fixes.
+
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2012 Mark Pitchless
