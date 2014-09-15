@@ -63,17 +63,17 @@ has pod_file => (
 );
 
 sub _build_pod_file {
+
     my $self = shift;
+
     my $gclass = $self->getopt_class;
-    if ( is_loaded($gclass) ) {
-        return pod_where( {-inc => 1}, $gclass );
-    }
-    else {
-        # Class doesn't seem to be loaded (used) so try the script file. E.g. a
-        # class definition and main pkg runner all in one file.
-        my $file = "$FindBin::Bin/$FindBin::Script";
-        return $file if -f $file && contains_pod($file);
-    }
+
+    my $file = "$FindBin::Bin/$FindBin::Script";
+
+    return $file if -f $file && contains_pod($file);
+
+    return pod_where( {-inc => 1}, $gclass ) if is_loaded($gclass);
+
     return undef;
 }
 
