@@ -63,15 +63,14 @@ has pod_file => (
 );
 
 sub _build_pod_file {
-
     my $self = shift;
 
-    my $gclass = $self->getopt_class;
-
+    # Script file, may have inline pod docs
     my $file = "$FindBin::Bin/$FindBin::Script";
-
     return $file if -f $file && contains_pod($file);
 
+    # Use the pod docs from the class
+    my $gclass = $self->getopt_class;
     return pod_where( {-inc => 1}, $gclass ) if is_loaded($gclass);
 
     return undef;
