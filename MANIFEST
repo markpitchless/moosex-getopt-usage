@@ -9,10 +9,7 @@ lib/MooseX/Getopt/Usage.pm
 lib/MooseX/Getopt/Usage/Formatter.pm
 lib/MooseX/Getopt/Usage/Pod/Text.pm
 lib/MooseX/Getopt/Usage/Role/Man.pm
-Makefile.PL
 MANIFEST
-META.json
-META.yml
 README
 t/00-load.t
 t/basic.t
