@@ -1,5 +1,7 @@
 Revision history for MooseX-Getopt-Usage
 
+    * @skazakoff - fix for Moose 2.1204
+
 0.20    16th Nov 2013
 
     * Add width formatting option.
