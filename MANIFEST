@@ -5,6 +5,11 @@ examples/descusage.pl
 examples/hello-compact.pl
 examples/hello.pl
 examples/synopsis.pl
+examples/always_color.pl
+examples/BaseHello.pm
+examples/compact.pl
+examples/export_sort.pl
+examples/filter_attr.pl
 lib/MooseX/Getopt/Usage.pm
 lib/MooseX/Getopt/Usage/Formatter.pm
 lib/MooseX/Getopt/Usage/Pod/Text.pm
