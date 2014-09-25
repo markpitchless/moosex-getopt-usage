@@ -1,7 +1,7 @@
 MooseX::Getopt::Usage
 =====================
 
-Extend [MooseX::Getopt](https://metacpan.org/pod/MooseX::Getopt) with usage message and man page generated from attribute meta and POD.
+Extend [MooseX::Getopt](https://metacpan.org/pod/MooseX::Getopt) with (colour) usage message and man page generated from attribute meta and POD.
 
 SYNOPSIS
 --------
