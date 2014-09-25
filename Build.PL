@@ -7,6 +7,12 @@ my $builder = Module::Build->new(
     license             => 'perl',
     dist_author         => q{Mark Pitchless <markpitchless@gmail.com>},
     dist_version_from   => 'lib/MooseX/Getopt/Usage.pm',
+    meta_merge => {
+        resources => {
+            repository => 'https://github.com/markpitchless/moosex-getopt-usage',
+            bugtracker => 'https://github.com/markpitchless/moosex-getopt-usage/issues',
+        },
+    },
     configure_requires => {
         'Module::Build' => 0.4
     },
