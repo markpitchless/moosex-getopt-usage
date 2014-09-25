@@ -30,18 +30,7 @@ SYNOPSIS
 ```
 
 Can now get help,
-
-```sh
- $ synopsis.pl -?
- Usage:
-     synopsis.pl [OPTIONS]
- 
- Options:
-      --man             - Bool. Display man page
-      --help -? --usage - Bool. Display the usage message and exit
-      --verbose         - Bool. Say lots about what we are doing
-      --gumption        - Int. Default=23. How much gumption to apply
-```
+![Screenshot](images/example-synopsis-help.png)
 
 trap errors with usage,
 
