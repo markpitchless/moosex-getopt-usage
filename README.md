@@ -30,23 +30,12 @@ SYNOPSIS
 ```
 
 Can now get help,
-![Screenshot](images/example-synopsis-help.png)
+
+![Screenshot1](images/example-synopsis-help.png)
 
 trap errors with usage,
 
-```
- $ synopsis.pl --elbowgrease --gumption=Lots
- Unknown option: elbowgrease
- Value "Lots" invalid for option gumption (number expected)
- Usage:
-     synopsis.pl [OPTIONS]
- 
- Options:
-      --man             - Bool. Display man page
-      --help -? --usage - Bool. Display the usage message and exit
-      --verbose         - Bool. Say lots about what we are doing
-      --gumption        - Int. Default=23. How much gumption to apply
-```
+![Screenshot2](images/example-synopsis-error.png)
 
 and get a man page:
 
