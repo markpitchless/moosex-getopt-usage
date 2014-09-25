@@ -1,7 +1,7 @@
 package MooseX::Getopt::Usage::Role::Man;
 
 use 5.010;
-our $VERSION = '0.21_01';
+our $VERSION = '0.22';
 
 use Moose::Role;
 
