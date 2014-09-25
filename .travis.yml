@@ -1,3 +1,5 @@
+# https://travis-ci.org/markpitchless/moosex-getopt-usage
+# http://blogs.perl.org/users/neilb/2014/08/try-travis-ci-with-your-cpan-distributions.html
 language: perl
 perl:
     - "5.18"
