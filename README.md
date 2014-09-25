@@ -1,5 +1,5 @@
-MooseX-Getopt-Usage
-===================
+MooseX::Getopt::Usage
+=====================
 
 Extend MooseX::Getopt with usage message and man page generated from attribute meta and POD.
 
@@ -45,7 +45,7 @@ Can now get help,
 
 trap errors with usage,
 
-```sh
+```
  $ synopsis.pl --elbowgrease --gumption=Lots
  Unknown option: elbowgrease
  Value "Lots" invalid for option gumption (number expected)
@@ -61,6 +61,6 @@ trap errors with usage,
 
 and get a man page:
 
-```sh
+```
  $ synopsis.pl --man
 ```
