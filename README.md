@@ -42,3 +42,8 @@ and get a man page:
 ```
  $ synopsis.pl --man
 ```
+
+SEE ALSO
+--------
+
+See [the README](README) for install instructions, [the METACPAN page](https://metacpan.org/pod/MooseX::Getopt::Usage) for latest release docs.
