@@ -47,3 +47,14 @@ SEE ALSO
 --------
 
 See [the README](README) for install instructions, [the METACPAN page](https://metacpan.org/pod/MooseX::Getopt::Usage) for latest release docs.
+
+LICENSE AND COPYRIGHT
+---------------------
+
+Copyright (C) 2012 Mark Pitchless
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of either: the GNU General Public License as published
+by the Free Software Foundation; or the Artistic License.
+
+See http://dev.perl.org/licenses/ for more information.
