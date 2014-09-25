@@ -2,6 +2,8 @@ Revision history for MooseX-Getopt-Usage
 
 0.23_01 Current development version (not released).
 
+    * Github links in meta.
+    * Fancy README.md for github.
     * Builds on TravisCI.
 
 
