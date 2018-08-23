@@ -474,7 +474,7 @@ sub _colourise {
     my $colours = $self->colours;
 
     my $str = ref $out ? $out : \$out;
-    $$str =~ s/(^|\s|\[)(--?[\w?]+)/"$1".colored $colours->{flag},"$2"/ge;
+    $$str =~ s/(^|\s|\[)(--?[\w?\-]+)/"$1".colored $colours->{flag},"$2"/ge;
     return ref $out ? $out : $$str;
 }
 
